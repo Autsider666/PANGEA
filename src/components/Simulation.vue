@@ -44,7 +44,7 @@
         methods: {
             startSimulation() {
                 this.neat = new window.neataptic.Neat(8, 4, null, {
-                        popsize: this.amountWorlds,
+                        popsize: this.amountWorlds * this.amountPredators,
                         elitism: 5,
                         mutationRate: 0.5
                     }
@@ -55,9 +55,9 @@
             generateWorlds() {
                 for (let i = 1; i <= this.amountWorlds; i++) {
                     this.worlds.push(new World(this.$refs['w' + i][0], 200, 50, this.amountPredators, this.amountPrey, () => this.endGeneration()))
-//                    this.worlds[i - 1].predators.forEach(predator => {
-//                        predator.brain = this.neat.population[i - 1]
-//                    })
+                    this.worlds[i - 1].predators.forEach((predator, p) => {
+                        predator.brain = this.neat.population[i * p - 1]
+                    })
                 }
             },
             seedWorlds() {

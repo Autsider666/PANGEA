@@ -3,7 +3,7 @@ class Predator {
         this.x = x
         this.y = y
         // this.score = 0
-        this.energy = 100
+        this.energy = 150
     }
 
     move(game) {
@@ -33,21 +33,23 @@ class Predator {
             canMoveRight = 1
         }
 
-        let closestPrey = game.prey.reduce(function (a, b) {
-            return Math.min(Math.sqrt(Math.pow(a.x, 2) + Math.pow(a.y, 2)), Math.sqrt(Math.pow(b.x, 2) + Math.pow(b.y, 2)));
-        });
+        if (game.prey.length) {
+            let closestPrey = game.prey.reduce(function (a, b) {
+                return Math.min(Math.sqrt(Math.pow(a.x, 2) + Math.pow(a.y, 2)), Math.sqrt(Math.pow(b.x, 2) + Math.pow(b.y, 2)));
+            });
 
-        if (this.y < closestPrey.y) {
-            isPreyUp = 1
-        }
-        if (this.y > closestPrey.y) {
-            isPreyDown = 1
-        }
-        if (this.x < closestPrey.x) {
-            isPreyLeft = 1
-        }
-        if (this.x > closestPrey.x) {
-            isPreyRight = 1
+            if (this.y < closestPrey.y) {
+                isPreyUp = 1
+            }
+            if (this.y > closestPrey.y) {
+                isPreyDown = 1
+            }
+            if (this.x < closestPrey.x) {
+                isPreyLeft = 1
+            }
+            if (this.x > closestPrey.x) {
+                isPreyRight = 1
+            }
         }
 
         // activate the neural network (aka "where the magic happens")
@@ -61,24 +63,24 @@ class Predator {
             if (this.y > 0) {
                 this.y--
                 if (isPreyUp) {
-                    this.brain.score += 1
+                    // this.brain.score += 1
                 } else {
-                    this.brain.score -= 0.25
+                    // this.brain.score -= 0.25
                 }
             } else {
-                this.brain.score -= 0.5
+                // this.brain.score -= 0.5
             }
         } else if (output[0] < output[1]) {
             this.energy--
             if (this.y < game.unitsEachRow) {
                 this.y++
                 if (isPreyDown) {
-                    this.brain.score += 1
+                    // this.brain.score += 1
                 } else {
-                    this.brain.score -= 0.25
+                    // this.brain.score -= 0.25
                 }
             } else {
-                this.brain.score -= 0.5
+                // this.brain.score -= 0.5
             }
         }
 
@@ -87,24 +89,24 @@ class Predator {
             if (this.x > 0) {
                 this.x--
                 if (isPreyLeft) {
-                    this.brain.score += 1
+                    // this.brain.score += 1
                 } else {
-                    this.brain.score -= 0.25
+                    // this.brain.score -= 0.25
                 }
             } else {
-                this.brain.score -= 0.5
+                // this.brain.score -= 0.5
             }
         } else if (output[2] < output[3]) {
             this.energy--
             if (this.x < game.unitsEachRow) {
                 this.x++
                 if (isPreyRight) {
-                    this.brain.score += 1
+                    // this.brain.score += 1
                 } else {
-                    this.brain.score -= 0.25
+                    // this.brain.score -= 0.25
                 }
             } else {
-                this.brain.score -= 0.5
+                // this.brain.score -= 0.5
             }
         }
 
