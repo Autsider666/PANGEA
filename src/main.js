@@ -5,6 +5,8 @@ import store from './store'
 
 require('neataptic')
 
+require('@fortawesome/fontawesome-free/css/all.css')
+
 window.eventBus = new Vue()
 
 Vue.config.productionTip = false

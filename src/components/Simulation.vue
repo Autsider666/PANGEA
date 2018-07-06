@@ -2,19 +2,26 @@
     <div>
         <p v-if="!worlds.length">
             <label for="worlds">How many worlds?</label>
-            <input type="number" id="worlds" min="1" v-model="amountWorlds"><br>
+            <input type="number" id="worlds" min="1" v-model="simulationStats.amountWorlds"><br>
             <label for="predator">How many predators in each world?</label>
-            <input type="number" id="predator" min="1" v-model="amountPredators"><br>
+            <input type="number" id="predator" min="1" v-model="simulationStats.amountPredators"><br>
             <label for="prey">How many prey in each world?</label>
-            <input type="number" id="prey" min="1" v-model="amountPrey"><br>
+            <input type="number" id="prey" min="1" v-model="simulationStats.amountPrey"><br>
+            <label for="pixelHeight">World pixel height?</label>
+            <input type="number" id="pixelHeight" min="1" v-model="simulationStats.pixelHeight"><br>
+            <label for="pixelWidth">World pixel width?</label>
+            <input type="number" id="pixelWidth" min="1" v-model="simulationStats.pixelWidth"><br>
+            <label for="GridHeight">World grid height?</label>
+            <input type="number" id="GridHeight" min="1" v-model="simulationStats.gridHeight"><br>
+            <label for="gridWidth">World grid width?</label>
+            <input type="number" id="gridWidth" min="1" v-model="simulationStats.gridHeight"><br>
             <button @click="startSimulation">Start</button>
         </p>
         <div v-show="worlds.length">
             <p>
                 Generation: {{generation}} | Max score: {{maxScore}}
             </p>
-            <!--<world :ref="'w'+i" :fps="30" :key="i" :id="'World '+i" v-for="i in 10"></world>-->
-            <div class="world" :ref="'w'+i" :key="i" :id="'World '+i" v-for="i in parseInt(amountWorlds)">
+            <div class="world" :ref="'w'+i" :key="i" :id="'World '+i" v-for="i in parseInt(simulationStats.amountWorlds)">
                 <p>World {{i}}</p>
             </div>
         </div>
@@ -22,29 +29,31 @@
 </template>
 
 <script>
-    import world from '../components/World.vue'
     import World from '../Classes/World'
     export default {
-        components: {
-            world
-        },
         props: {},
         data () {
             return {
                 worlds: [],
                 worldsFinished: 0,
-                amountWorlds: 5,
-                amountPredators: 1,
-                amountPrey: 1,
                 neat: null,
                 maxScore: 0,
                 generation: 1,
+                simulationStats: {
+                    amountWorlds: 5,
+                    amountPredators: 1,
+                    amountPrey: 1,
+                    pixelHeight: 200,
+                    pixelWidth: 200,
+                    gridHeight: 50,
+                    gridWidth: 50,
+                }
             }
         },
         methods: {
             startSimulation() {
                 this.neat = new window.neataptic.Neat(8, 4, null, {
-                        popsize: this.amountWorlds * this.amountPredators,
+                        popsize: this.simulationStats.amountWorlds * this.simulationStats.amountPredators,
                         elitism: 5,
                         mutationRate: 0.5
                     }
@@ -53,8 +62,8 @@
                 this.seedWorlds()
             },
             generateWorlds() {
-                for (let i = 1; i <= this.amountWorlds; i++) {
-                    this.worlds.push(new World(this.$refs['w' + i][0], 200, 50, this.amountPredators, this.amountPrey, () => this.endGeneration()))
+                for (let i = 1; i <= this.simulationStats.amountWorlds; i++) {
+                    this.worlds.push(new World(this.$refs['w' + i][0], 200, 50, this.simulationStats.amountPredators, this.simulationStats.amountPrey, () => this.endGeneration()))
                     this.worlds[i - 1].predators.forEach((predator, p) => {
                         predator.brain = this.neat.population[i * p - 1]
                     })
