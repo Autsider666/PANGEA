@@ -21,7 +21,8 @@
             return {
                 worlds: [],
                 worldsFinished: 0,
-                neat: null,
+                predatorNeat: null,
+                preyNeat: null,
                 maxScore: 0,
                 generation: 1,
                 reset: false,
@@ -35,11 +36,22 @@
             startSimulation() {
                 this.maxScore = 0
                 this.generation = 1
-                
+
                 this.amountWorlds = this.simulationSettings.amountWorlds
-                this.neat = new window.neataptic.Neat(8, 4, null, {
+                this.predatorNeat = new window.neataptic.Neat(8, 4, null, {
                         popsize: this.simulationSettings.amountWorlds * this.simulationSettings.amountPredators,
                         elitism: this.simulationSettings.amountPredators / 100 * this.simulationSettings.elitism,
+                        mutationRate: this.simulationSettings.mutationRate / 100,
+                        network: new window.neataptic.architect.Random(
+                            8,
+                            Math.random() * 25,
+                            4
+                        )
+                    }
+                )
+                this.preyNeat = new window.neataptic.Neat(8, 4, null, {
+                        popsize: this.simulationSettings.amountWorlds * this.simulationSettings.amountPrey,
+                        elitism: this.simulationSettings.amountPrey / 100 * this.simulationSettings.elitism,
                         mutationRate: this.simulationSettings.mutationRate / 100,
                         network: new window.neataptic.architect.Random(
                             8,
@@ -68,17 +80,19 @@
                         parseInt(this.simulationSettings.gridWidth),
                         parseInt(this.simulationSettings.amountPredators),
                         parseInt(this.simulationSettings.amountPrey), () => this.endGeneration()))
-                    this.worlds[i - 1].predators.forEach((predator, p) => {
-                        predator.brain = this.neat.population[i * p - 1]
-                    })
                 }
             },
             seedWorlds() {
                 this.worlds.forEach((world, index) => {
                     world.resetPrey()
+                    world.prey.forEach(prey => {
+                        prey.brain = this.preyNeat.population[index]
+                        prey.energy = 100
+                        prey.brain.score = 0
+                    })
                     world.resetPredators()
                     world.predators.forEach(predator => {
-                        predator.brain = this.neat.population[index]
+                        predator.brain = this.predatorNeat.population[index]
                         predator.energy = 100
                         predator.brain.score = 0
                     })
@@ -92,30 +106,49 @@
                 }
                 this.worldsFinished = 0;
 
-                this.neat.sort()
+                this.predatorNeat.sort()
 
-                this.maxScore = Math.max(this.maxScore, ...this.neat.population.map(p => p.score)).toFixed(2)
+                this.maxScore = Math.max(this.maxScore, ...this.predatorNeat.population.map(p => p.score)).toFixed(2)
 
-//                this.maxScore = this.neat.popsize > 1 ? Math.max(this.maxScore, this.neat.getFittest().score) : this.neat.population[0].score
-
-                const newGeneration = []
-
-                for (let i = 0; i < this.neat.elitism; i++) {
-                    newGeneration.push(this.neat.population[i])
-                }
-
-                for (let i = 0; i < this.neat.popsize - this.neat.elitism; i++) {
-                    newGeneration.push(this.neat.getOffspring())
-                }
-
-                this.neat.population = newGeneration
-                if (this.neat.popsize > 1) {
-                    this.neat.mutate()
-                }
-                this.neat.generation++
+                this.breedNextGenerationOfPredators()
+                this.breedNextGenerationOfPrey()
                 this.generation++
                 this.seedWorlds()
-            }
+            },
+            breedNextGenerationOfPredators(){
+                const newGeneration = []
+
+                for (let i = 0; i < this.predatorNeat.elitism; i++) {
+                    newGeneration.push(this.predatorNeat.population[i])
+                }
+
+                for (let i = 0; i < this.predatorNeat.popsize - this.predatorNeat.elitism; i++) {
+                    newGeneration.push(this.predatorNeat.getOffspring())
+                }
+
+                this.predatorNeat.population = newGeneration
+                if (this.predatorNeat.popsize > 1) {
+                    this.predatorNeat.mutate()
+                }
+                this.predatorNeat.generation++
+            },
+            breedNextGenerationOfPrey(){
+                const newGeneration = []
+
+                for (let i = 0; i < this.preyNeat.elitism; i++) {
+                    newGeneration.push(this.preyNeat.population[i])
+                }
+
+                for (let i = 0; i < this.preyNeat.popsize - this.preyNeat.elitism; i++) {
+                    newGeneration.push(this.preyNeat.getOffspring())
+                }
+
+                this.preyNeat.population = newGeneration
+                if (this.preyNeat.popsize > 1) {
+                    this.preyNeat.mutate()
+                }
+                this.preyNeat.generation++
+            },
         },
         mounted() {
             window.eventBus.$on('start', () => this.startSimulation())

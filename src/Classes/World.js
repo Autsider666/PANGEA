@@ -1,4 +1,5 @@
 import Predator from './Predator.js'
+import Prey from './Prey.js'
 class World {
     constructor(element, pixelHeight, pixelWidth, gridHeight, gridWidth, predators, prey, onEnd) {
         this.status = 'IDLE'
@@ -67,9 +68,9 @@ class World {
                         return
                     }
 
-                    this.predators.forEach(predator => {
-                        predator.move(this)
-                    })
+                    this.predators.forEach(predator => predator.move(this))
+
+                    this.prey.forEach(prey => prey.move(this))
 
                     this.updateWorld()
 
@@ -84,10 +85,7 @@ class World {
     }
 
     spawnPrey() {
-        this.prey.push({
-            x: Math.floor(Math.random() * this.gridWidth) + 1,
-            y: Math.floor(Math.random() * this.gridHeight) + 1,
-        })
+        this.prey.push(new Prey(Math.floor(Math.random() * this.gridWidth) + 1, Math.floor(Math.random() * this.gridHeight) + 1))
     }
 
     resetPredators() {

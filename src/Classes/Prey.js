@@ -1,4 +1,4 @@
-class Predator {
+class Prey {
     constructor(x, y) {
         this.x = x
         this.y = y
@@ -13,10 +13,10 @@ class Predator {
         let canMoveDown = 0
         let canMoveLeft = 0
         let canMoveRight = 0
-        let isPreyUp = 0
-        let isPreyDown = 0
-        let isPreyLeft = 0
-        let isPreyRight = 0
+        let isPredatorUp = 0
+        let isPredatorDown = 0
+        let isPredatorLeft = 0
+        let isPredatorRight = 0
 
         if (this.y - 1 >= 0) {
             canMoveUp = 1
@@ -31,34 +31,34 @@ class Predator {
             canMoveRight = 1
         }
 
-        let closestPrey = null
-        if (game.prey.length) {
-            closestPrey = game.prey.reduce(function (a, b) {
+        let closestPredator = null
+        if (game.predators.length) {
+            closestPredator = game.predators.reduce(function (a, b) {
                 return Math.min(Math.sqrt(Math.pow(a.x, 2) + Math.pow(a.y, 2)), Math.sqrt(Math.pow(b.x, 2) + Math.pow(b.y, 2)));
             });
 
-            if (this.y < closestPrey.y) {
-                isPreyUp = 1
+            if (this.y < closestPredator.y) {
+                isPredatorUp = 1
             }
-            if (this.y > closestPrey.y) {
-                isPreyDown = 1
+            if (this.y > closestPredator.y) {
+                isPredatorDown = 1
             }
-            if (this.x < closestPrey.x) {
-                isPreyLeft = 1
+            if (this.x < closestPredator.x) {
+                isPredatorLeft = 1
             }
-            if (this.x > closestPrey.x) {
-                isPreyRight = 1
+            if (this.x > closestPredator.x) {
+                isPredatorRight = 1
             }
         }
 
         // activate the neural network (aka "where the magic happens")
 
-        const input = [canMoveUp, canMoveDown, canMoveLeft, canMoveRight, isPreyUp, isPreyDown, isPreyLeft, isPreyRight]
-        const output = this.brain.activate(input)
+        const input = [canMoveUp, canMoveDown, canMoveLeft, canMoveRight, isPredatorUp, isPredatorDown, isPredatorLeft, isPredatorRight]
+        const output = this.brain.activate(input)//.map(o => Math.round(o))
 
         let oldDistance = 0
-        if (closestPrey) {
-            oldDistance = Math.sqrt(Math.pow(this.x - closestPrey.x, 2) + Math.pow(this.y - closestPrey.y, 2))
+        if (closestPredator) {
+            oldDistance = Math.sqrt(Math.pow(this.x - closestPredator.x, 2) + Math.pow(this.y - closestPredator.y, 2))
         }
         let moved = false
         // set the new direction
@@ -67,7 +67,7 @@ class Predator {
             if (this.y > 0) {
                 this.y--
                 moved = true
-                if (isPreyUp) {
+                if (isPredatorUp) {
                     // this.brain.score += 1
                 } else {
                     // this.brain.score -= 0.25
@@ -80,7 +80,7 @@ class Predator {
             if (this.y < game.gridHeight) {
                 this.y++
                 moved = true
-                if (isPreyDown) {
+                if (isPredatorDown) {
                     // this.brain.score += 1
                 } else {
                     // this.brain.score -= 0.25
@@ -93,7 +93,7 @@ class Predator {
             if (this.x > 0) {
                 this.x--
                 moved = true
-                if (isPreyLeft) {
+                if (isPredatorLeft) {
                     // this.brain.score += 1
                 } else {
                     // this.brain.score -= 0.25
@@ -106,7 +106,7 @@ class Predator {
             if (this.x < game.gridWidth) {
                 this.x++
                 moved = true
-                if (isPreyRight) {
+                if (isPredatorRight) {
                     // this.brain.score += 1
                 } else {
                     // this.brain.score -= 0.25
@@ -116,24 +116,15 @@ class Predator {
             }
         }
 
-        if (closestPrey && moved) {
-            let newDistance = Math.sqrt(Math.pow(this.x - closestPrey.x, 2) + Math.pow(this.y - closestPrey.y, 2))
+        if (closestPredator && moved) {
+            let newDistance = Math.sqrt(Math.pow(this.x - closestPredator.x, 2) + Math.pow(this.y - closestPredator.y, 2))
             let delta = oldDistance - newDistance
 
-            let amount = 5
-            if (newDistance < amount) {
-                this.brain.score += 0.1 * (amount - newDistance) / amount
+            let amount = 10
+            if (newDistance > amount) {
+                this.brain.score += 0.1 * (newDistance - amount) / amount
             }
         }
-
-        game.prey.forEach((prey, index) => {
-            if (prey.x === this.x && prey.y === this.y) {
-                this.energy = Math.min(100, this.energy + 50)
-                this.brain.score += 10
-                game.prey.splice(index, 1)
-                prey.alive = false
-            }
-        })
     }
 }
-export default Predator
+export default Prey
