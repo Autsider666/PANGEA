@@ -8,6 +8,14 @@ export default new Vuex.Store({
     plugins: [pathify.plugin],
     state: {
         started: false,
+        sideSettings: {
+            show: true,
+            size: 350
+        },
+        sideStats: {
+            show: false,
+            size: 350
+        },
         simulationSettings: {
             amountWorlds: 5,
             amountPredators: 1,

@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.1.0",
+    "frappe-charts": "^1.1.0",
     "neataptic": "^1.4.7",
     "p5": "^0.6.1",
     "rot-js": "^0.6.5",

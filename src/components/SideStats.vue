@@ -1,6 +1,6 @@
 <template>
-    <div id="mySidenav" class="sidenav" ref="sidenav">
-        <a href="javascript:void(0)" class="node closebtn" @click="eventBus.$emit('toggle')">&times;</a>
+    <div class="sideStats" ref="sideStats" v-bind:style="{width: (sideStats.show ? sideStats.size: 0) + 'px'}">
+        <a href="javascript:void(0)" class="node closebtn" @click="sideStats.show = false">&times;</a>
         <input type="submit" @click="eventBus.$emit('start')" :value="startButton">
         <button class="dropdown" @click="toggleDropdown('simulation')">
             Simulation Settings
@@ -57,7 +57,6 @@
     export default {
         data () {
             return {
-                show: true,
                 eventBus: window.eventBus,
                 dropdown: 'simulation'
             }
@@ -65,6 +64,7 @@
         computed: {
             simulationSettings: sync('simulationSettings'),
             started: sync('started'),
+            sideStats: sync('sideStats'),
             startButton(){
                 if (this.started) {
                     return "Restart Simulation"
@@ -73,14 +73,6 @@
             }
         },
         methods: {
-            toggle(){
-                if (this.show) {
-                    this.$refs.sidenav.style.width = "0";
-                } else {
-                    this.$refs.sidenav.style.width = "350px";
-                }
-                this.show = !this.show
-            },
             toggleDropdown(name) {
                 if (this.dropdown === name) {
                     this.dropdown = 'none'
@@ -89,29 +81,26 @@
                 }
             }
         },
-        mounted() {
-            this.eventBus.$on('toggle', () => this.toggle())
-        }
     }
 </script>
 
 <style scoped>
     /* The side navigation menu */
-    .sidenav {
+    .sideStats {
         height: 100%; /* 100% Full-height */
-        width: 350px; /* 0 width - change this with JavaScript */
+        /*width: 350px; !* 0 width - change this with JavaScript *!*/
         position: fixed; /* Stay in place */
         z-index: 1; /* Stay on top */
         top: 0; /* Stay at the top */
-        left: 0;
+        right: 0;
         background-color: #111; /* Black*/
         overflow-x: hidden; /* Disable horizontal scroll */
         padding-top: 60px; /* Place content 60px from the top */
-        transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+        transition: 0.5s; /* 0.5 second transition effect to slide in the sideStats */
     }
 
     /* The navigation menu links */
-    .sidenav .node, .dropdown {
+    .sideStats .node, .dropdown {
         padding-top: 16px;
         padding-bottom: 8px;
         text-align: center;
@@ -132,18 +121,18 @@
     }
 
     /* When you mouse over the navigation links, change their color */
-    .sidenav .node:hover {
+    .sideStats .node:hover {
         color: #f1f1f1;
     }
 
     /* Position and style the close button (top right corner) */
-    .sidenav .closebtn {
+    .sideStats .closebtn {
         position: absolute;
         top: 0;
-        right: 25px;
+        left: 25px;
         font-size: 36px;
-        margin-left: 50px;
-        text-align: right;
+        margin-right: 50px;
+        text-align: left;
     }
 
     label {
@@ -180,13 +169,13 @@
         background-color: dimgrey;
     }
 
-    /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+    /* On smaller screens, where height is less than 450px, change the style of the sideStats (less padding and a smaller font size) */
     @media screen and (max-height: 450px) {
-        .sidenav {
+        .sideStats {
             padding-top: 15px;
         }
 
-        .sidenav .node {
+        .sideStats .node {
             font-size: 18px;
         }
     }

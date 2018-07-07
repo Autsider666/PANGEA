@@ -1,40 +1,31 @@
 <template>
-    <div id="app" ref="main">
-        <side-form/>
-        <span class="top-left" @click="eventBus.$emit('toggle')" style="font-size:30px;cursor:pointer">
-            &#9776; open form
+    <div id="app" ref="main"
+         v-bind:style="{marginLeft: (sideSettings.show ? sideSettings.size : 0) + 'px',marginRight: (sideStats.show ? sideStats.size: 0) + 'px'}">
+        <side-settings/>
+        <span class="top-left" @click="sideSettings.show = true" style="font-size:30px;cursor:pointer">
+            &#9776; Settings
         </span>
         <router-view/>
+        <side-stats/>
+        <span class="top-right" @click="sideStats.show = true" style="font-size:30px;cursor:pointer">
+            Statistics &#9776;
+        </span>
     </div>
 </template>
 
 <script>
-    import SideForm from './components/SideForm.vue'
+    import SideSettings from './components/SideSettings.vue'
+    import SideStats from './components/SideStats.vue'
+    import {sync} from 'vuex-pathify'
     export default {
         components: {
-            SideForm
+            SideSettings,
+            SideStats
         },
-        data () {
-            return {
-                show: true,
-                eventBus: window.eventBus,
-            }
+        computed: {
+            sideStats: sync('sideStats'),
+            sideSettings: sync('sideSettings'),
         },
-        methods: {
-            toggle(){
-                if (this.show) {
-                    this.$refs.main.style.marginLeft = "0";
-                } else {
-                    this.$refs.main.style.marginLeft = "350px";
-                }
-                this.show = !this.show
-            }
-        },
-        mounted() {
-            this.eventBus.$on('toggle', () => {
-                this.toggle()
-            })
-        }
     }
 </script>
 
@@ -46,7 +37,8 @@
         text-align: center;
         color: #2c3e50;
         margin-left: 350px;
-        transition: margin-left .5s;
+        margin-right: 350px;
+        transition: margin .5s;
         padding: 20px;
     }
 
@@ -54,6 +46,12 @@
         position: absolute;
         top: 0;
         left: 0;
+    }
+
+    .top-right {
+        position: absolute;
+        top: 0;
+        right: 0;
     }
 
     #nav {
