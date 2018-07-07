@@ -23,18 +23,19 @@ class Predator {
         if (this.y - 1 >= 0) {
             canMoveUp = 1
         }
-        if (this.y + 1 <= game.unitsEachRow) {
+        if (this.y + 1 <= game.gridHeight) {
             canMoveDown = 1
         }
         if (this.x - 1 >= 0) {
             canMoveLeft = 1
         }
-        if (this.x + 1 <= game.unitsEachRow) {
+        if (this.x + 1 <= game.gridWidth) {
             canMoveRight = 1
         }
 
+        let closestPrey = null
         if (game.prey.length) {
-            let closestPrey = game.prey.reduce(function (a, b) {
+            closestPrey = game.prey.reduce(function (a, b) {
                 return Math.min(Math.sqrt(Math.pow(a.x, 2) + Math.pow(a.y, 2)), Math.sqrt(Math.pow(b.x, 2) + Math.pow(b.y, 2)));
             });
 
@@ -57,11 +58,17 @@ class Predator {
         const input = [canMoveUp, canMoveDown, canMoveLeft, canMoveRight, isPreyUp, isPreyDown, isPreyLeft, isPreyRight]
         const output = this.brain.activate(input)//.map(o => Math.round(o))
 
+        let oldDistance = 0
+        if (closestPrey) {
+            oldDistance = Math.sqrt(Math.pow(this.x - closestPrey.x, 2) + Math.pow(this.y - closestPrey.y, 2))
+        }
+        let moved = false
         // set the new direction
-        if (output[0] > output[1]) {
+        if (output[0] === Math.max(...output)) {
             this.energy--
             if (this.y > 0) {
                 this.y--
+                moved = true
                 if (isPreyUp) {
                     // this.brain.score += 1
                 } else {
@@ -70,10 +77,11 @@ class Predator {
             } else {
                 // this.brain.score -= 0.5
             }
-        } else if (output[0] < output[1]) {
+        } else if (output[1] === Math.max(...output)) {
             this.energy--
-            if (this.y < game.unitsEachRow) {
+            if (this.y < game.gridHeight) {
                 this.y++
+                moved = true
                 if (isPreyDown) {
                     // this.brain.score += 1
                 } else {
@@ -82,12 +90,11 @@ class Predator {
             } else {
                 // this.brain.score -= 0.5
             }
-        }
-
-        if (output[2] > output[3]) {
+        } else if (output[2] === Math.max(...output)) {
             this.energy--
             if (this.x > 0) {
                 this.x--
+                moved = true
                 if (isPreyLeft) {
                     // this.brain.score += 1
                 } else {
@@ -96,10 +103,11 @@ class Predator {
             } else {
                 // this.brain.score -= 0.5
             }
-        } else if (output[2] < output[3]) {
+        } else if (output[3] === Math.max(...output)) {
             this.energy--
-            if (this.x < game.unitsEachRow) {
+            if (this.x < game.gridWidth) {
                 this.x++
+                moved = true
                 if (isPreyRight) {
                     // this.brain.score += 1
                 } else {
@@ -110,10 +118,20 @@ class Predator {
             }
         }
 
+        if (closestPrey && moved) {
+            let newDistance = Math.sqrt(Math.pow(this.x - closestPrey.x, 2) + Math.pow(this.y - closestPrey.y, 2))
+            let delta = oldDistance - newDistance
+
+            let amount = 5
+            if (newDistance < amount) {
+                this.brain.score += 0.1 * (amount - newDistance) / amount
+            }
+        }
+
         game.prey.forEach((prey, index) => {
             if (prey.x === this.x && prey.y === this.y) {
-                this.energy += 80
-                this.brain.score += 5
+                this.energy = Math.min(100, this.energy + 50)
+                this.brain.score += 10
                 game.prey.splice(index, 1)
                 console.log('Njom')
             }

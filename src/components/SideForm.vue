@@ -1,31 +1,26 @@
 <template>
     <div id="mySidenav" class="sidenav" ref="sidenav">
         <a href="javascript:void(0)" class="node closebtn" @click="eventBus.$emit('toggle')">&times;</a>
-        <input type="submit" @click="" value="Start Simulation">
-        <!--<label class="node" for="predator">Predators in each world?</label>-->
-        <!--<input type="number" id="predator" min="1" v-model="asimulationSettings.mountPredators"><br>-->
-        <!--<label class="node" for="prey">Prey in each world?</label>-->
-        <!--<input type="number" id="prey" min="1" v-model="simulationSettings.amountPrey"><br>-->
-        <!--<label class="node" for="pixelHeight">World pixel height?</label>-->
-        <!--<input type="number" id="pixelHeight" min="1" v-model="psimulationSettings.ixelHeight"><br>-->
-        <!--<label class="node" for="pixelWidth">World pixel width?</label>-->
-        <!--<input type="number" id="pixelWidth" min="1" v-model="simulationSettings.pixelWidth"><br>-->
-        <!--<label class="node" for="GridHeight">World grid height?</label>-->
-        <!--<input type="number" id="GridHeight" min="1" v-model="simulationSettings.gridHeight"><br>-->
-        <!--<label class="node" for="gridWidth">World grid width?</label>-->
-        <!--<input type="number" id="gridWidth" min="1" v-model="simulationSettings.gridHeight"><br><br>-->
-        <!--<input type="submit" @click="" value="Start Simulation">-->
-        <button class="dropdown">
+        <input type="submit" @click="eventBus.$emit('start')" :value="startButton">
+        <button class="dropdown" @click="toggleDropdown('simulation')">
             Simulation Settings
-            <i class="fa fa-caret-down"></i>
+            <i class="fa fa-caret-down" v-if="dropdown!=='simulation'"></i>
+            <i class="fa fa-caret-left" v-else=""></i>
         </button>
-        <div class="dropdown-container">
+        <div class="dropdown-container" v-bind:style="{display:dropdown === 'simulation' ? 'block':'none'}">
             <label class="node" for="worlds">How many worlds?</label>
             <input type="number" id="worlds" min="1" v-model="simulationSettings.amountWorlds"><br>
-            <label class="node" for="predator">Predators in each world?</label>
-            <input type="number" id="predator" min="1" v-model="simulationSettings.amountPredators"><br>
-            <label class="node" for="prey">Prey in each world?</label>
-            <input type="number" id="prey" min="1" v-model="simulationSettings.amountPrey"><br>
+            <label class="node" for="elitism">Elitism Percentage?</label>
+            <input type="number" id="elitism" min="10" max="100" v-model="simulationSettings.elitism"><br>
+            <label class="node" for="mutation">Mutation Rate Percentage?</label>
+            <input type="number" id="mutation" min="5" max="100" v-model="simulationSettings.mutationRate"><br>
+        </div>
+        <button class="dropdown" @click="toggleDropdown('world')">
+            World Settings
+            <i class="fa fa-caret-down" v-if="dropdown!=='world'"></i>
+            <i class="fa fa-caret-left" v-else=""></i>
+        </button>
+        <div class="dropdown-container" v-bind:style="{display:dropdown === 'world' ? 'block':'none'}">
             <label class="node" for="pixelHeight">World pixel height?</label>
             <input type="number" id="pixelHeight" min="1" v-model="simulationSettings.pixelHeight"><br>
             <label class="node" for="pixelWidth">World pixel width?</label>
@@ -33,26 +28,48 @@
             <label class="node" for="GridHeight">World grid height?</label>
             <input type="number" id="GridHeight" min="1" v-model="simulationSettings.gridHeight"><br>
             <label class="node" for="gridWidth">World grid width?</label>
-            <input type="number" id="gridWidth" min="1" v-model="simulationSettings.gridHeight"><br><br>
+            <input type="number" id="gridWidth" min="1" v-model="simulationSettings.gridWidth"><br>
+        </div>
+        <button class="dropdown" @click="toggleDropdown('predator')">
+            Predator Settings
+            <i class="fa fa-caret-down" v-if="dropdown!=='predator'"></i>
+            <i class="fa fa-caret-left" v-else=""></i>
+        </button>
+        <div class="dropdown-container" v-bind:style="{display:dropdown === 'predator' ? 'block':'none'}">
+            <label class="node" for="predator">Predators in each world?</label>
+            <input type="number" id="predator" min="1" v-model="simulationSettings.amountPredators"><br>
+        </div>
+        <button class="dropdown" @click="toggleDropdown('prey')">
+            Prey Settings
+            <i class="fa fa-caret-down" v-if="dropdown!=='prey'"></i>
+            <i class="fa fa-caret-left" v-else=""></i>
+        </button>
+        <div class="dropdown-container" v-bind:style="{display:dropdown === 'prey' ? 'block':'none'}">
+            <label class="node" for="prey">Prey in each world?</label>
+            <input type="number" id="prey" min="1" v-model="simulationSettings.amountPrey"><br>
         </div>
     </div>
 </template>
 
 <script>
+    import {sync} from 'vuex-pathify';
+
     export default {
         data () {
             return {
                 show: true,
                 eventBus: window.eventBus,
-                simulationSettings: {
-                    amountWorlds: 5,
-                    amountPredators: 1,
-                    amountPrey: 1,
-                    pixelHeight: 200,
-                    pixelWidth: 200,
-                    gridHeight: 50,
-                    gridWidth: 50,
+                dropdown: 'simulation'
+            }
+        },
+        computed: {
+            simulationSettings: sync('simulationSettings'),
+            started: sync('started'),
+            startButton(){
+                if (this.started) {
+                    return "Restart Simulation"
                 }
+                return "Start Simulation"
             }
         },
         methods: {
@@ -63,6 +80,13 @@
                     this.$refs.sidenav.style.width = "350px";
                 }
                 this.show = !this.show
+            },
+            toggleDropdown(name) {
+                if (this.dropdown === name) {
+                    this.dropdown = 'none'
+                } else {
+                    this.dropdown = name
+                }
             }
         },
         mounted() {

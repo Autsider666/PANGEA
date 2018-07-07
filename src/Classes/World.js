@@ -1,9 +1,11 @@
 import Predator from './Predator.js'
 class World {
-    constructor(element, size, unitsEachRow, predators, prey, onEnd) {
+    constructor(element, pixelHeight, pixelWidth, gridHeight, gridWidth, predators, prey, onEnd) {
         this.status = 'IDLE'
-        this.size = size
-        this.unitsEachRow = unitsEachRow
+        this.pixelHeight = pixelHeight
+        this.pixelWidth = pixelWidth
+        this.gridHeight = gridHeight
+        this.gridWidth = gridWidth
         this.maxPredators = predators
         this.resetPredators()
 
@@ -14,22 +16,25 @@ class World {
         }
         this.onEnd = onEnd
 
-        this.creatureSize = this.size / this.unitsEachRow
+        this.creatureHeight = this.pixelHeight / this.gridHeight
+        this.creatureWidth = this.pixelWidth / this.gridWidth
+
         const P5 = require('p5')
+        this.element = element
         new P5(p => {
                 p.setup = () => {
                     p.frameRate(60)
-                    p.createCanvas(this.size + this.size / this.unitsEachRow, this.size + this.size / this.unitsEachRow)
+                    p.createCanvas(this.pixelWidth + this.pixelWidth / this.gridWidth, this.pixelHeight + this.pixelHeight / this.gridHeight)
                 }
 
                 p.drawPrey = () => {
                     p.fill('red')
                     this.prey.forEach(prey => {
                         p.rect(
-                            (prey.x) * this.creatureSize,
-                            (prey.y) * this.creatureSize,
-                            this.creatureSize,
-                            this.creatureSize,
+                            (prey.x) * this.creatureWidth,
+                            (prey.y) * this.creatureHeight,
+                            this.creatureWidth,
+                            this.creatureHeight,
                         )
                     })
                 }
@@ -38,10 +43,10 @@ class World {
                     p.fill('black')
                     this.predators.forEach(predator => {
                         p.rect(
-                            (predator.x) * this.creatureSize,
-                            (predator.y) * this.creatureSize,
-                            this.creatureSize,
-                            this.creatureSize,
+                            (predator.x) * this.creatureWidth,
+                            (predator.y) * this.creatureHeight,
+                            this.creatureWidth,
+                            this.creatureHeight,
                         )
                     })
                 }
@@ -80,15 +85,22 @@ class World {
 
     spawnPrey() {
         this.prey.push({
-            x: Math.floor(Math.random() * this.unitsEachRow) + 1,
-            y: Math.floor(Math.random() * this.unitsEachRow) + 1,
+            x: Math.floor(Math.random() * this.gridWidth) + 1,
+            y: Math.floor(Math.random() * this.gridHeight) + 1,
         })
     }
 
     resetPredators() {
         this.predators = []
         for (let i = 1; i <= this.maxPredators; i++) {
-            this.predators.push(new Predator(Math.floor(Math.random() * this.unitsEachRow) + 1, Math.floor(Math.random() * this.unitsEachRow) + 1))
+            this.predators.push(new Predator(Math.floor(Math.random() * this.gridWidth) + 1, Math.floor(Math.random() * this.gridHeight) + 1))
+        }
+    }
+
+    resetPrey() {
+        this.prey = []
+        for (let i = 1; i <= this.maxPredators; i++) {
+            this.spawnPrey()
         }
     }
 
@@ -109,6 +121,10 @@ class World {
     start() {
         this.turns = 0
         this.status = 'RUNNING'
+    }
+
+    stop() {
+        this.element.removeChild(this.element.childNodes[1]);
     }
 }
 
