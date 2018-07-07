@@ -33,6 +33,9 @@
         },
         methods: {
             startSimulation() {
+                this.maxScore = 0
+                this.generation = 1
+                
                 this.amountWorlds = this.simulationSettings.amountWorlds
                 this.neat = new window.neataptic.Neat(8, 4, null, {
                         popsize: this.simulationSettings.amountWorlds * this.simulationSettings.amountPredators,
@@ -51,7 +54,6 @@
                 })
             },
             generateWorlds() {
-                this.generation = 1
                 if (this.worlds.length) {
                     this.worlds.forEach(world => {
                         world.stop()
@@ -92,7 +94,9 @@
 
                 this.neat.sort()
 
-                this.maxScore = this.neat.popsize > 1 ? Math.max(this.maxScore, this.neat.getFittest().score) : this.neat.population[0].score
+                this.maxScore = Math.max(this.maxScore, ...this.neat.population.map(p => p.score)).toFixed(2)
+
+//                this.maxScore = this.neat.popsize > 1 ? Math.max(this.maxScore, this.neat.getFittest().score) : this.neat.population[0].score
 
                 const newGeneration = []
 
