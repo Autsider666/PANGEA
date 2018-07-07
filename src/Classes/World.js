@@ -1,42 +1,47 @@
 import Predator from './Predator.js'
 import Prey from './Prey.js'
 class World {
-    constructor(element, pixelHeight, pixelWidth, gridHeight, gridWidth, predators, prey, onEnd) {
+    constructor(element, pixelHeight, pixelWidth, gridHeight, gridWidth, predators, predatorHasBrain, prey, preyHasBrain, onEnd) {
         this.status = 'IDLE'
         this.pixelHeight = pixelHeight
         this.pixelWidth = pixelWidth
         this.gridHeight = gridHeight
         this.gridWidth = gridWidth
         this.maxPredators = predators
-        this.resetPredators()
-
-        this.prey = []
         this.maxPrey = prey
-        for (let i = 1; i <= prey; i++) {
-            this.spawnPrey()
-        }
         this.onEnd = onEnd
+        this.element = element
+
+        this.predatorHasBrain = predatorHasBrain
+        this.preyHasBrain = preyHasBrain
 
         this.creatureHeight = this.pixelHeight / this.gridHeight
         this.creatureWidth = this.pixelWidth / this.gridWidth
 
+        this.spawnPredators()
+        this.prey = []
+        for (let i = 1; i <= prey; i++) {
+            this.spawnPrey()
+        }
+
         const P5 = require('p5')
-        this.element = element
         new P5(p => {
                 p.setup = () => {
                     p.frameRate(60)
-                    p.createCanvas(this.pixelWidth + this.pixelWidth / this.gridWidth, this.pixelHeight + this.pixelHeight / this.gridHeight)
+                    p.createCanvas(this.pixelWidth + this.pixelWidth / this.gridWidth + 4, this.pixelHeight + this.pixelHeight / this.gridHeight + 4)
                 }
 
                 p.drawPrey = () => {
                     p.fill('red')
                     this.prey.forEach(prey => {
-                        p.rect(
-                            (prey.x) * this.creatureWidth,
-                            (prey.y) * this.creatureHeight,
-                            this.creatureWidth,
-                            this.creatureHeight,
-                        )
+                        if (prey.alive) {
+                            p.ellipse(
+                                (prey.x) * this.creatureWidth + 2,
+                                (prey.y) * this.creatureHeight + 2,
+                                this.creatureWidth,
+                                this.creatureHeight,
+                            )
+                        }
                     })
                 }
 
@@ -44,8 +49,8 @@ class World {
                     p.fill('black')
                     this.predators.forEach(predator => {
                         p.rect(
-                            (predator.x) * this.creatureWidth,
-                            (predator.y) * this.creatureHeight,
+                            (predator.x) * this.creatureWidth + 2,
+                            (predator.y) * this.creatureHeight + 2,
                             this.creatureWidth,
                             this.creatureHeight,
                         )
@@ -68,9 +73,13 @@ class World {
                         return
                     }
 
-                    this.predators.forEach(predator => predator.move(this))
+                    if (this.predatorHasBrain) {
+                        this.predators.forEach(predator => predator.move(this))
+                    }
 
-                    this.prey.forEach(prey => prey.move(this))
+                    if (this.preyHasBrain) {
+                        this.prey.forEach(prey => prey.move(this))
+                    }
 
                     this.updateWorld()
 
@@ -88,7 +97,7 @@ class World {
         this.prey.push(new Prey(Math.floor(Math.random() * this.gridWidth) + 1, Math.floor(Math.random() * this.gridHeight) + 1))
     }
 
-    resetPredators() {
+    spawnPredators() {
         this.predators = []
         for (let i = 1; i <= this.maxPredators; i++) {
             this.predators.push(new Predator(Math.floor(Math.random() * this.gridWidth) + 1, Math.floor(Math.random() * this.gridHeight) + 1))
@@ -97,7 +106,7 @@ class World {
 
     resetPrey() {
         this.prey = []
-        for (let i = 1; i <= this.maxPredators; i++) {
+        for (let i = 1; i <= this.maxPrey; i++) {
             this.spawnPrey()
         }
     }
@@ -110,9 +119,11 @@ class World {
             this.status = 'GAME_OVER'
             this.onEnd()
         } else {
-            while (this.prey.length < this.maxPrey) {
-                this.spawnPrey()
-            }
+            this.prey.filter(prey => !prey.alive).forEach(prey => {
+                prey.x = Math.floor(Math.random() * this.gridWidth) + 1
+                prey.y = Math.floor(Math.random() * this.gridHeight) + 1
+                prey.alive = true
+            })
         }
     }
 

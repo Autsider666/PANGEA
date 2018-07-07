@@ -48,6 +48,8 @@
         <div class="dropdown-container" v-bind:style="{display:dropdown === 'prey' ? 'block':'none'}">
             <label class="node" for="prey">Prey in each world?</label>
             <input type="number" id="prey" min="1" v-model="simulationSettings.amountPrey"><br>
+            <label class="node" for="preyBrain">Should prey have a brain?</label>
+            <input type="checkbox" id="preyBrain" min="1" v-model="simulationSettings.preyBrains">
         </div>
     </div>
 </template>

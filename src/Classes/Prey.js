@@ -3,6 +3,7 @@ class Prey {
         this.x = x
         this.y = y
         this.energy = 150
+        this.alive = true
     }
 
     move(game) {

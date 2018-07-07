@@ -19,13 +19,22 @@ export default new Vuex.Store({
         simulationSettings: {
             amountWorlds: 5,
             amountPredators: 1,
+            predatorBrains: true,
             amountPrey: 1,
+            preyBrains: false,
             pixelHeight: 200,
             pixelWidth: 200,
             gridHeight: 50,
             gridWidth: 50,
             elitism: 0,
             mutationRate: 5,
+        },
+        simulation: {
+            generation: 0,
+            topPredatorScore: 0,
+            topPreyScore: 0,
+            worlds: [],
+
         }
     },
     mutations: {},

@@ -61,58 +61,29 @@ class Predator {
             oldDistance = Math.sqrt(Math.pow(this.x - closestPrey.x, 2) + Math.pow(this.y - closestPrey.y, 2))
         }
         let moved = false
-        // set the new direction
         if (output[0] === Math.max(...output)) {
             this.energy--
             if (this.y > 0) {
                 this.y--
                 moved = true
-                if (isPreyUp) {
-                    // this.brain.score += 1
-                } else {
-                    // this.brain.score -= 0.25
-                }
-            } else {
-                // this.brain.score -= 0.5
             }
         } else if (output[1] === Math.max(...output)) {
             this.energy--
             if (this.y < game.gridHeight) {
                 this.y++
                 moved = true
-                if (isPreyDown) {
-                    // this.brain.score += 1
-                } else {
-                    // this.brain.score -= 0.25
-                }
-            } else {
-                // this.brain.score -= 0.5
             }
         } else if (output[2] === Math.max(...output)) {
             this.energy--
             if (this.x > 0) {
                 this.x--
                 moved = true
-                if (isPreyLeft) {
-                    // this.brain.score += 1
-                } else {
-                    // this.brain.score -= 0.25
-                }
-            } else {
-                // this.brain.score -= 0.5
             }
         } else if (output[3] === Math.max(...output)) {
             this.energy--
             if (this.x < game.gridWidth) {
                 this.x++
                 moved = true
-                if (isPreyRight) {
-                    // this.brain.score += 1
-                } else {
-                    // this.brain.score -= 0.25
-                }
-            } else {
-                // this.brain.score -= 0.5
             }
         }
 
@@ -130,7 +101,6 @@ class Predator {
             if (prey.x === this.x && prey.y === this.y) {
                 this.energy = Math.min(100, this.energy + 50)
                 this.brain.score += 10
-                game.prey.splice(index, 1)
                 prey.alive = false
             }
         })

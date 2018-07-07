@@ -1,11 +1,15 @@
 <template>
     <div>
-        <div v-show="worlds.length">
+        <p v-show="!simulation.worlds.length">
+            Black Square = Predator <br>
+            Red dot = Prey
+        </p>
+        <div v-show="simulation.worlds.length">
             <p>
-                Generation: {{generation}} | Max score: {{maxScore}}
+                Generation: {{simulation.generation}} | Top Predator score: {{simulation.topPredatorScore}}
             </p>
             <div class="world" :ref="'w'+i" :key="i" :id="'World '+i"
-                 v-for="i in parseInt(amountWorlds)" v-if="!reset">
+                 v-for="i in visualWorlds">
                 <p>World {{i}}</p>
             </div>
         </div>
@@ -19,27 +23,42 @@
         props: {},
         data () {
             return {
-                worlds: [],
                 worldsFinished: 0,
                 predatorNeat: null,
                 preyNeat: null,
-                maxScore: 0,
-                generation: 1,
-                reset: false,
-                amountWorlds: 0
+                visualWorlds: 0,
             }
         },
         computed: {
-            simulationSettings: sync('simulationSettings')
+            simulationSettings: sync('simulationSettings'),
+            simulation: sync('simulation'),
         },
         methods: {
             startSimulation() {
-                this.maxScore = 0
-                this.generation = 1
+                this.simulation.topPredatorScore = 0
+                this.simulation.topPreyScore = 0
+                this.simulation.generation = 1
 
-                this.amountWorlds = this.simulationSettings.amountWorlds
+                this.simulation.worlds.forEach(world => {
+                    world.stop()
+                })
+
+                this.simulation.worlds = []
+                for (let i = 1; i <= this.simulationSettings.amountWorlds; i++) {
+                    this.simulation.worlds.push(new World(this.$refs['w' + i][0],
+                        parseInt(this.simulationSettings.pixelHeight),
+                        parseInt(this.simulationSettings.pixelWidth),
+                        parseInt(this.simulationSettings.gridHeight),
+                        parseInt(this.simulationSettings.gridWidth),
+                        parseInt(this.simulationSettings.amountPredators),
+                        !!this.simulationSettings.predatorBrains,
+                        parseInt(this.simulationSettings.amountPrey),
+                        !!this.simulationSettings.preyBrains,
+                        () => this.endGeneration()))
+                }
+
                 this.predatorNeat = new window.neataptic.Neat(8, 4, null, {
-                        popsize: this.simulationSettings.amountWorlds * this.simulationSettings.amountPredators,
+                        popsize: this.simulation.worlds.length * this.simulationSettings.amountPredators,
                         elitism: this.simulationSettings.amountPredators / 100 * this.simulationSettings.elitism,
                         mutationRate: this.simulationSettings.mutationRate / 100,
                         network: new window.neataptic.architect.Random(
@@ -49,8 +68,9 @@
                         )
                     }
                 )
+
                 this.preyNeat = new window.neataptic.Neat(8, 4, null, {
-                        popsize: this.simulationSettings.amountWorlds * this.simulationSettings.amountPrey,
+                        popsize: this.simulation.worlds.length * this.simulationSettings.amountPrey,
                         elitism: this.simulationSettings.amountPrey / 100 * this.simulationSettings.elitism,
                         mutationRate: this.simulationSettings.mutationRate / 100,
                         network: new window.neataptic.architect.Random(
@@ -60,59 +80,51 @@
                         )
                     }
                 )
-                this.$nextTick(() => {
-                    this.generateWorlds()
-                    this.seedWorlds()
-                })
-            },
-            generateWorlds() {
-                if (this.worlds.length) {
-                    this.worlds.forEach(world => {
-                        world.stop()
-                    })
-                    this.worlds = []
-                }
-                for (let i = 1; i <= this.simulationSettings.amountWorlds; i++) {
-                    this.worlds.push(new World(this.$refs['w' + i][0],
-                        parseInt(this.simulationSettings.pixelHeight),
-                        parseInt(this.simulationSettings.pixelWidth),
-                        parseInt(this.simulationSettings.gridHeight),
-                        parseInt(this.simulationSettings.gridWidth),
-                        parseInt(this.simulationSettings.amountPredators),
-                        parseInt(this.simulationSettings.amountPrey), () => this.endGeneration()))
-                }
+                this.seedWorlds()
             },
             seedWorlds() {
-                this.worlds.forEach((world, index) => {
+                this.simulation.worlds.forEach((world, w) => {
                     world.resetPrey()
                     world.prey.forEach(prey => {
-                        prey.brain = this.preyNeat.population[index]
+                        prey.brain = this.preyNeat.population[w]
                         prey.energy = 100
                         prey.brain.score = 0
                     })
-                    world.resetPredators()
-                    world.predators.forEach(predator => {
-                        predator.brain = this.predatorNeat.population[index]
+                    world.spawnPredators()
+                    world.predators.forEach((predator, p) => {
+                        let x = w * world.predators.length + p
+                        predator.brain = this.predatorNeat.population[x]
                         predator.energy = 100
                         predator.brain.score = 0
                     })
                 })
-                this.worlds.forEach(world => world.start())
+                this.simulation.worlds.forEach(world => world.start())
             },
             endGeneration() {
-                if (this.worldsFinished + 1 < this.worlds.length) {
+                if (this.worldsFinished + 1 < this.simulation.worlds.length) {
                     this.worldsFinished++
                     return
                 }
                 this.worldsFinished = 0;
 
+//                this.simulation.worlds.forEach((world, w) => {
+//                    world.predators.forEach((predator, p) => {
+//                        let x = (w + 1) * (p + 1) - 1;
+//                        this.predatorNeat.population[x].score = predator.brain.score + 1
+//                    })
+//                })
+
+//                console.log([].concat.apply([], this.simulation.worlds.map(w => w.predators)).map(p => p.brain.score))
+//                console.log(this.predatorNeat.population.map(p => p.score))
+
                 this.predatorNeat.sort()
 
-                this.maxScore = Math.max(this.maxScore, ...this.predatorNeat.population.map(p => p.score)).toFixed(2)
+                this.simulation.topPredatorScore = Math.max(this.simulation.topPredatorScore, ...this.predatorNeat.population.map(p => p.score)).toFixed(2)
+                this.simulation.topPreyScore = Math.max(this.simulation.topPreyScore, ...this.preyNeat.population.map(p => p.score)).toFixed(2)
 
                 this.breedNextGenerationOfPredators()
                 this.breedNextGenerationOfPrey()
-                this.generation++
+                this.simulation.generation++
                 this.seedWorlds()
             },
             breedNextGenerationOfPredators(){
@@ -151,7 +163,10 @@
             },
         },
         mounted() {
-            window.eventBus.$on('start', () => this.startSimulation())
+            window.eventBus.$on('start', () => {
+                this.visualWorlds = parseInt(this.simulationSettings.amountWorlds)
+                this.$nextTick(() => this.startSimulation())
+            })
         }
     }
 </script>

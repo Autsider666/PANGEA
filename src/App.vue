@@ -39,7 +39,8 @@
         margin-left: 350px;
         margin-right: 350px;
         transition: margin .5s;
-        padding: 20px;
+        padding-top: 20px;
+        padding-bottom: 20px;
     }
 
     .top-left {
