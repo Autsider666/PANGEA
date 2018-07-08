@@ -123,7 +123,7 @@
                 this.simulation.topPreyScore = Math.max(this.simulation.topPreyScore, ...this.preyNeat.population.map(p => p.score)).toFixed(2)
 
                 this.breedNextGenerationOfPredators()
-                this.breedNextGenerationOfPrey()
+//                this.breedNextGenerationOfPrey()
                 this.simulation.generation++
                 this.seedWorlds()
             },
