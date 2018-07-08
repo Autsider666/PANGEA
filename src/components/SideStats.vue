@@ -1,8 +1,8 @@
 <template>
-    <div class="sideStats" ref="sideStats" v-bind:style="{width: (sideStats.show ? sideStats.size: 0) + 'px'}">
+    <div class="sideStats" ref="sideStats" v-bind:style="{width: (sideStats.show ? sideStats.size: 0) + '%'}">
         <span class="node closebtn" @click="sideStats.show = false">&times;</span>
         <button class="dropdown" @click="toggleDropdown('simulation')">
-            Simulation Statistics
+            Predator Statistics
             <i class="fa fa-caret-down" v-if="dropdown!=='simulation'"></i>
             <i class="fa fa-caret-left" v-else=""></i>
         </button>
@@ -57,15 +57,15 @@
                     labels: [0],
                     datasets: [
                         {
-                            label: 'Max',
+                            label: 'Top score',
                             data: [0]
                         },
                         {
-                            label: 'Average',
+                            label: 'Average score',
                             data: [0]
                         },
                         {
-                            label: 'Min',
+                            label: 'Lowest Score',
                             data: [0]
                         }
                     ]

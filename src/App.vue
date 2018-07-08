@@ -1,6 +1,6 @@
 <template>
     <div id="app" ref="main"
-         v-bind:style="{marginLeft: (sideSettings.show ? sideSettings.size : 0) + 'px',marginRight: (sideStats.show ? sideStats.size: 0) + 'px'}">
+         v-bind:style="{marginLeft: (sideSettings.show ? sideSettings.size : 0) + 'px',marginRight: (sideStats.show ? sideStats.size: 0) + '%'}">
         <side-settings/>
         <span class="top-left" @click="sideSettings.show = true" style="font-size:30px;cursor:pointer">
             &#9776; Settings

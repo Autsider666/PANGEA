@@ -14,7 +14,7 @@ export default new Vuex.Store({
         },
         sideStats: {
             show: false,
-            size: 350,
+            size: 40,
         },
         simulationSettings: {
             amountWorlds: 5,
