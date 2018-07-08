@@ -47,12 +47,14 @@
         position: absolute;
         top: 0;
         left: 0;
+        padding-left: 6px;
     }
 
     .top-right {
         position: absolute;
         top: 0;
         right: 0;
+        padding-right: 6px;
     }
 
     #nav {

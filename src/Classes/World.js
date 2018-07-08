@@ -73,21 +73,23 @@ class World {
                         return
                     }
 
-                    if (this.predatorHasBrain) {
-                        this.predators.forEach(predator => predator.move(this))
+                    if (this.status !== "PAUSE"){
+                        if (this.predatorHasBrain) {
+                            this.predators.forEach(predator => predator.move(this))
+                        }
+
+                        if (this.preyHasBrain) {
+                            this.prey.forEach(prey => prey.move(this))
+                        }
+
+                        this.updateWorld()
+
+                        p.background(255)
+
+                        p.drawPredator()
+                        p.drawPrey()
+                        this.turns++
                     }
-
-                    if (this.preyHasBrain) {
-                        this.prey.forEach(prey => prey.move(this))
-                    }
-
-                    this.updateWorld()
-
-                    p.background(255)
-
-                    p.drawPredator()
-                    p.drawPrey()
-                    this.turns++
                 }
             },
             element)

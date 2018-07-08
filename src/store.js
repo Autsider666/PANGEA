@@ -14,7 +14,7 @@ export default new Vuex.Store({
         },
         sideStats: {
             show: false,
-            size: 350
+            size: 350,
         },
         simulationSettings: {
             amountWorlds: 5,
@@ -34,7 +34,9 @@ export default new Vuex.Store({
             topPredatorScore: 0,
             topPreyScore: 0,
             worlds: [],
-
+            predatorNeat: null,
+            preyNeat: null,
+            state: 'IDLE'
         }
     },
     mutations: {},

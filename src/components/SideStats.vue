@@ -1,13 +1,14 @@
 <template>
     <div class="sideStats" ref="sideStats" v-bind:style="{width: (sideStats.show ? sideStats.size: 0) + 'px'}">
-        <a href="javascript:void(0)" class="node closebtn" @click="sideStats.show = false">&times;</a>
+        <span class="node closebtn" @click="sideStats.show = false">&times;</span>
         <button class="dropdown" @click="toggleDropdown('simulation')">
             Simulation Statistics
             <i class="fa fa-caret-down" v-if="dropdown!=='simulation'"></i>
             <i class="fa fa-caret-left" v-else=""></i>
         </button>
         <div class="dropdown-container" v-bind:style="{display:dropdown === 'simulation' ? 'block':'none'}">
-            Coming Soon!
+            <!--Coming Soon!-->
+            <canvas ref="predatorScore" style="background-color: lightgrey"></canvas>
             <!--<label class="node" for="worlds">How many worlds?</label>-->
             <!--<input type="number" id="worlds" min="1" v-model="simulationSettings.amountWorlds"><br>-->
             <!--<label class="node" for="elitism">Elitism Percentage?</label>-->
@@ -20,18 +21,22 @@
 
 <script>
     import {sync} from 'vuex-pathify';
+    import Chart from 'chart.js';
 
     export default {
         data () {
             return {
                 eventBus: window.eventBus,
-                dropdown: 'simulation'
+                dropdown: 'simulation',
+                chart: null,
+                predatorScoreData: null
             }
         },
         computed: {
             simulationSettings: sync('simulationSettings'),
             started: sync('started'),
             sideStats: sync('sideStats'),
+            simulation: sync('simulation'),
             startButton(){
                 if (this.started) {
                     return "Restart Simulation"
@@ -46,12 +51,68 @@
                 } else {
                     this.dropdown = name
                 }
+            },
+            setup() {
+                this.predatorScoreData = {
+                    labels: [0],
+                    datasets: [
+                        {
+                            label: 'Max',
+                            data: [0]
+                        },
+                        {
+                            label: 'Average',
+                            data: [0]
+                        },
+                        {
+                            label: 'Min',
+                            data: [0]
+                        }
+                    ]
+                }
+
+                this.chart = new Chart(this.$refs.predatorScore, {
+                    title: 'Predator score history',
+                    type: 'line',
+                    height: 200,
+                    data: this.predatorScoreData
+                });
             }
         },
+        mounted() {
+            window.eventBus.$on('start', () => {
+                if (!this.predatorScoreData) {
+                    this.setup()
+                }
+            })
+
+            window.eventBus.$on('restart', () => {
+                this.setup()
+            })
+
+            window.eventBus.$on('endGeneration', () => {
+                this.predatorScoreData.labels.push(this.simulation.generation)
+                this.predatorScoreData.datasets[0].data.push(this.simulation.predatorNeat.population[0].score.toFixed(2))
+                this.predatorScoreData.datasets[1].data.push(this.simulation.predatorNeat.getAverage().toFixed(2))
+                this.predatorScoreData.datasets[2].data.push(this.simulation.predatorNeat.population[this.simulation.predatorNeat.popsize - 1].score.toFixed(2))
+
+                if (this.predatorScoreData.labels.length > 15) {
+                    this.predatorScoreData.labels.shift()
+                    this.predatorScoreData.datasets.forEach(d => d.data.shift())
+                }
+
+                this.chart.update()
+            })
+        }
     }
 </script>
 
 <style scoped>
+
+    canvas{
+        width: 100%;
+    }
+
     /* The side navigation menu */
     .sideStats {
         height: 100%; /* 100% Full-height */
@@ -80,6 +141,7 @@
         background: none;
         width: 100%;
         cursor: pointer;
+        outline: 0;
     }
 
     .dropdown {
@@ -100,6 +162,8 @@
         font-size: 36px;
         margin-right: 50px;
         text-align: left;
+        width: 25px;
+        cursor: pointer;
     }
 
     label {

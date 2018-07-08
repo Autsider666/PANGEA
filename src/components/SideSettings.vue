@@ -1,8 +1,20 @@
 <template>
     <div class="sideSettings" ref="sideSettings"
          v-bind:style="{width: (sideSettings.show ? sideSettings.size : 0) + 'px'}">
-        <a href="javascript:void(0)" class="node closebtn" @click="sideSettings.show = false">&times;</a>
-        <input type="submit" @click="eventBus.$emit('start')" :value="startButton">
+        <span href="javascript:void(0)" class="node closebtn" @click="sideSettings.show = false">&times;</span>
+
+        <!--<input type="submit" @click="eventBus.$emit('start')" :value="startButton">-->
+        <div class="button-case">
+            <span class="node sim-state-button" v-if="simulation.state === 'IDLE' || simulation.state === 'PAUSE'"
+                  @click="eventBus.$emit('start')"><i
+                    class="fas fa-play"></i></span>
+            <span class="node sim-state-button" v-else="" @click="eventBus.$emit('pause')"><i class="fas fa-pause"></i></span>
+            <span class="node sim-state-button">
+                <i v-bind:class="{'disabled':simulation.state === 'IDLE'}"
+                   @click="simulation.state !== 'IDLE' ? eventBus.$emit('restart'):null" class="fas fa-undo"></i>
+            </span>
+        </div>
+
         <button class="dropdown" @click="toggleDropdown('simulation')">
             Simulation Settings
             <i class="fa fa-caret-down" v-if="dropdown!=='simulation'"></i>
@@ -66,14 +78,8 @@
         },
         computed: {
             simulationSettings: sync('simulationSettings'),
-            started: sync('started'),
+            simulation: sync('simulation'),
             sideSettings: sync('sideSettings'),
-            startButton(){
-                if (this.started) {
-                    return "Restart Simulation"
-                }
-                return "Start Simulation"
-            }
         },
         methods: {
             toggleDropdown(name) {
@@ -102,6 +108,26 @@
         transition: 0.5s; /* 0.5 second transition effect to slide in the sideSettings */
     }
 
+    .disabled {
+        color: dimgrey;
+        cursor: default;
+    }
+
+    .button-case {
+        border-radius: 4px; /* Rounded borders */
+        border: white solid 1px;
+        width: 150px;
+        margin: 0 auto;
+        text-align: center;
+        padding-bottom: 6px;
+    }
+
+    .sim-state-button {
+        width: 15px !important;
+        display: inline-block !important;
+        padding: 5px;
+    }
+
     /* The navigation menu links */
     .sideSettings .node, .dropdown {
         padding-top: 16px;
@@ -115,12 +141,18 @@
         border: none;
         background: none;
         width: 100%;
-        cursor: pointer;
+        outline: 0;
+        /*cursor: pointer;*/
     }
 
     .dropdown {
         font-weight: bold;
         font-size: 20px;
+        cursor: pointer;
+    }
+
+    .dropdown-container {
+        transition: 0.3s;
     }
 
     /* When you mouse over the navigation links, change their color */
@@ -136,6 +168,8 @@
         font-size: 36px;
         margin-left: 50px;
         text-align: right;
+        width: 25px;
+        cursor: pointer;
     }
 
     label {
