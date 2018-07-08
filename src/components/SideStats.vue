@@ -173,7 +173,7 @@
     /* Style inputs with type="text", select elements and textareas */
     input[type=text], input[type=number], select, textarea {
         min-width: 250px; /* Full width */
-        padding: 12px; /* Some padding */
+        padding-left: 12px; /* Some padding */
         border: 1px solid #ccc; /* Gray border */
         border-radius: 4px; /* Rounded borders */
         box-sizing: border-box; /* Make sure that padding and width stays in place */
