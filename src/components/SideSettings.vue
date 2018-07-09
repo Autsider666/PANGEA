@@ -87,8 +87,10 @@
             <i class="fa fa-caret-left" v-else=""></i>
         </button>
         <div class="dropdown-container" v-bind:style="{display:dropdown === 'predator' ? 'block':'none'}">
-            <label class="node" for="predator">Predators in each world?</label>
-            <input type="number" id="predator" min="1" v-model="simulationSettings.amountPredators"><br>
+            <div class="slidecontainer">
+                <label class="node" for="predator">Predators in each world: {{simulationSettings.amountPredators}}</label>
+                <input type="range" id="predator" class="slider" min="1" max="100" v-model="simulationSettings.amountPredators"><br>
+            </div>
         </div>
         <button class="dropdown" @click="toggleDropdown('prey')">
             Prey Settings
@@ -96,10 +98,12 @@
             <i class="fa fa-caret-left" v-else=""></i>
         </button>
         <div class="dropdown-container" v-bind:style="{display:dropdown === 'prey' ? 'block':'none'}">
-            <label class="node" for="prey">Prey in each world?</label>
-            <input type="number" id="prey" min="1" v-model="simulationSettings.amountPrey"><br>
-            <label class="node" for="preyBrain">Should prey have a brain?</label>
-            <input type="checkbox" id="preyBrain" min="1" v-model="simulationSettings.preyBrains">
+            <div class="slidecontainer">
+                <label class="node" for="prey">Prey in each world: {{simulationSettings.amountPrey}}</label>
+                <input type="range" id="prey" class="slider" min="1" max="100" v-model="simulationSettings.amountPrey"><br>
+                <!--<label class="node" for="preyBrain">Should prey have a brain?</label>-->
+                <!--<input type="checkbox" id="preyBrain" v-model="simulationSettings.preyBrains">-->
+            </div>
         </div>
     </div>
 </template>
