@@ -20,7 +20,7 @@
         },
         methods: {
             setup() {
-                this.chartData = {
+                this.chart.data = {
                     labels: [0],
                     datasets: [
                         {
@@ -37,25 +37,43 @@
                         }
                     ]
                 }
-
-                this.chart = new Chart(this.$refs.chart, {
-                    type: 'line',
-//                    height: 300,
-                    data: this.chartData,
-                    options: {
-                        title: {
-                            display: true,
-                            text: 'Predator score history',
-                        },
-//                        responsive: false,
-                        legend: {
-                            display: false,
-                        }
-                    }
-                });
+                this.chart.update()
             }
         },
         mounted(){
+            this.chartData = {
+                labels: [0],
+                datasets: [
+                    {
+                        label: 'Top score',
+                        data: [0]
+                    },
+                    {
+                        label: 'Average score',
+                        data: [0]
+                    },
+                    {
+                        label: 'Lowest Score',
+                        data: [0]
+                    }
+                ]
+            }
+            this.chart = new Chart(this.$refs.chart, {
+                type: 'line',
+                data: this.chartData,
+                options: {
+                    title: {
+                        display: true,
+                        text: 'Predator score history',
+                    },
+                    responsive: false,
+                    maintainAspectRatio: false,
+                    legend: {
+                        display: false,
+                    }
+                }
+            });
+
             window.eventBus.$on('start', () => {
                 if (!this.chartData) {
                     this.setup()
@@ -83,11 +101,20 @@
     }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
     .analytics {
-        display: inline-flex;
+        display: inline-block;
         text-align: center;
         height: 220px;
+    }
+
+    canvas {
+        background-color: $secondary-light;
+        border: 2px groove $secondary-dark;
+        padding: 5px;
+        /*width: 400px;*/
+        height: 270px;
+
     }
 
     h2 {

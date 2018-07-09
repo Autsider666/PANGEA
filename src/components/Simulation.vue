@@ -169,7 +169,6 @@
             window.eventBus.$on('restart', () => {
                 this.visualWorlds = parseInt(this.simulationSettings.amountWorlds)
                 this.$nextTick(() => this.startSimulation())
-                console.log('restarted')
                 this.simulation.state = "RUNNING"
             })
 
