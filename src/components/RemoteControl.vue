@@ -1,32 +1,37 @@
 <template>
     <div>
-        <div class="remote-control">
-            <span class="node remote-button" title="Start Simulation"
-                  v-if="simulation.state === 'IDLE' || simulation.state === 'PAUSE'"
-                  @click="eventBus.$emit('start')">
+        <div class="remote-control" title="Start Simulation" @click="eventBus.$emit('start')"
+             v-if="simulation.state === 'IDLE' || simulation.state === 'PAUSE'">
+            <span class="node remote-button">
                 <i class="fas fa-play"></i>
             </span>
-            <span class="node remote-button" title="Pause Simulation" v-else="" @click="eventBus.$emit('pause')">
+        </div>
+        <div class="remote-control" title="Pause Simulation" v-else="" @click="eventBus.$emit('pause')">
+            <span class="node remote-button">
                 <i class="fas fa-pause"></i>
             </span>
         </div>
 
-        <div class="remote-control">
+        <div class="remote-control" @click="simulation.state !== 'IDLE' ? eventBus.$emit('restart'):null"
+             v-bind:class="{'disabled':simulation.state === 'IDLE'}">
             <span class="node remote-button" title="Restart Simulation"
                   v-bind:class="{'disabled':simulation.state === 'IDLE'}">
-                <i @click="simulation.state !== 'IDLE' ? eventBus.$emit('restart'):null" class="fas fa-undo"></i>
+                <i class="fas fa-undo"></i>
             </span>
         </div>
 
-        <div class="remote-control">
-            <span class="node remote-button" title="Show inactive worlds" v-if="simulationSettings.hideInactiveWorlds"
-                  @click="simulationSettings.hideInactiveWorlds = false">
+        <div class="remote-control" title="Show inactive worlds" v-if="simulationSettings.hideInactiveWorlds"
+             @click="simulationSettings.hideInactiveWorlds = false">
+            <span class="node remote-button">
                 <i class="fas fa-eye"></i>
             </span>
-            <span class="node remote-button" title="Hide inactive worlds" v-else=""
-                  @click="simulationSettings.hideInactiveWorlds = true">
-            <i class="fas fa-eye-slash"></i>
-        </span>
+        </div>
+
+        <div class="remote-control" v-else=""
+             @click="simulationSettings.hideInactiveWorlds = true" title="Hide inactive worlds">
+            <span class="node remote-button">
+                <i class="fas fa-eye-slash"></i>
+            </span>
         </div>
     </div>
 </template>

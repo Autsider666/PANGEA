@@ -53,7 +53,7 @@
                         elitism: this.simulationSettings.amountPredators / 100 * this.simulationSettings.elitism,
                         mutationRate: this.simulationSettings.mutationRate / 100,
                         network: new window.neataptic.architect.Random(
-                            8,
+                            2,
                             Math.random() * 25,
                             4
                         )
@@ -65,7 +65,7 @@
                         elitism: this.simulationSettings.amountPrey / 100 * this.simulationSettings.elitism,
                         mutationRate: this.simulationSettings.mutationRate / 100,
                         network: new window.neataptic.architect.Random(
-                            8,
+                            2,
                             Math.random() * 25,
                             4
                         )

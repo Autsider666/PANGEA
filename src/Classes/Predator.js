@@ -31,7 +31,7 @@ class Predator {
             canMoveRight = 1
         }
 
-        let closestPrey = null
+        let closestPrey = this
         if (game.prey.length) {
             closestPrey = game.prey.reduce(function (a, b) {
                 return Math.min(Math.sqrt(Math.pow(a.x, 2) + Math.pow(a.y, 2)), Math.sqrt(Math.pow(b.x, 2) + Math.pow(b.y, 2)));
@@ -53,7 +53,8 @@ class Predator {
 
         // activate the neural network (aka "where the magic happens")
 
-        const input = [canMoveUp, canMoveDown, canMoveLeft, canMoveRight, isPreyUp, isPreyDown, isPreyLeft, isPreyRight]
+        // const input = [canMoveUp, canMoveDown, canMoveLeft, canMoveRight, isPreyUp, isPreyDown, isPreyLeft, isPreyRight]
+        const input = [(closestPrey.x - this.x)/game.gridWidth, (closestPrey.y - this.y)/game.gridHeight]
         const output = this.brain.activate(input)
 
         let oldDistance = 0
@@ -87,7 +88,7 @@ class Predator {
             }
         }
 
-        if (closestPrey && moved) {
+        if (closestPrey !== this && moved) {
             let newDistance = Math.sqrt(Math.pow(this.x - closestPrey.x, 2) + Math.pow(this.y - closestPrey.y, 2))
             let delta = oldDistance - newDistance
 

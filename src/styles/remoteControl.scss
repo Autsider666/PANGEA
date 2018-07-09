@@ -17,11 +17,12 @@
 
   .disabled {
     color: $secondary-dark;
+    border: $secondary-dark solid 3px;
     cursor: default;
   }
 
   .remote-button.disabled:hover {
-    border: $primary-light solid 3px;
+    //border: $primary-light solid 3px;
     cursor: default;
   }
 }

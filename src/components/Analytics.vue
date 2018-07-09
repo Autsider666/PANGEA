@@ -20,23 +20,21 @@
         },
         methods: {
             setup() {
-                this.chart.data = {
-                    labels: [0],
-                    datasets: [
-                        {
-                            label: 'Top score',
-                            data: [0]
-                        },
-                        {
-                            label: 'Average score',
-                            data: [0]
-                        },
-                        {
-                            label: 'Lowest Score',
-                            data: [0]
-                        }
-                    ]
-                }
+                this.chart.data.labels = [0]
+                this.chart.data.datasets = [
+                    {
+                        label: 'Top score',
+                        data: [0]
+                    },
+                    {
+                        label: 'Average score',
+                        data: [0]
+                    },
+                    {
+                        label: 'Lowest Score',
+                        data: [0]
+                    }
+                ]
                 this.chart.update()
             }
         },
