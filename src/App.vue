@@ -3,13 +3,14 @@
          v-bind:style="{marginLeft: (sideSettings.show ? sideSettings.size : 0) + 'px',marginRight: (sideStats.show ? sideStats.size: 0) + '%'}">
         <side-settings/>
         <span class="top-left" @click="sideSettings.show = true" style="font-size:30px;cursor:pointer">
-            &#9776; Settings
+            &#9776;
+            <!--Settings-->
         </span>
         <router-view/>
-        <side-stats/>
-        <span class="top-right" @click="sideStats.show = true" style="font-size:30px;cursor:pointer">
-            Statistics &#9776;
-        </span>
+        <!--<side-stats/>-->
+        <!--<span class="top-right" @click="sideStats.show = true" style="font-size:30px;cursor:pointer">-->
+            <!--Statistics &#9776;-->
+        <!--</span>-->
     </div>
 </template>
 
@@ -29,22 +30,22 @@
     }
 </script>
 
-<style>
+<style scoped lang="scss">
     #app {
-        font-family: 'Avenir', Helvetica, Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-align: center;
-        color: #2c3e50;
-        margin-left: 350px;
-        margin-right: 350px;
+        /*font-family: 'Avenir', Helvetica, Arial, sans-serif;*/
+        /*-webkit-font-smoothing: antialiased;*/
+        /*-moz-osx-font-smoothing: grayscale;*/
+        /*text-align: center;*/
+        /*!*color: #2c3e50;*!*/
+        /*margin-left: 350px;*/
+        /*margin-right: 350px;*/
         transition: margin .5s;
-        padding-top: 20px;
-        padding-bottom: 20px;
+        padding: 20px;
+        /*padding-bottom: 20px;*/
     }
 
     .top-left {
-        position: absolute;
+        position: fixed;
         top: 0;
         left: 0;
         padding-left: 6px;

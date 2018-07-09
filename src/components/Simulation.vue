@@ -1,17 +1,9 @@
 <template>
-    <div>
-        <p v-show="!simulation.worlds.length">
-            Black Square = Predator <br>
-            Red dot = Prey
-        </p>
-        <div v-show="simulation.worlds.length">
-            <p>
-                Generation: {{simulation.generation}} | Top Predator score: {{simulation.topPredatorScore}}
-            </p>
-            <div class="world" :ref="'w'+i" :key="i" :id="'World '+i"
-                 v-for="i in visualWorlds">
-                <p>World {{i}}</p>
-            </div>
+    <div v-show="simulation.worlds.length">
+        <div v-show="!simulationSettings.hideInactiveWorlds || simulationSettings.hideInactiveWorlds && simulation.worlds[i-1].status !== 'GAME_OVER'"
+             class="world" :ref="'w'+i" :key="i" :id="'World '+i"
+             v-for="i in visualWorlds">
+            <p><b>World {{i}}</b></p>
         </div>
     </div>
 </template>
@@ -25,6 +17,7 @@
             return {
                 worldsFinished: 0,
                 visualWorlds: 0,
+                eventBus: window.eventBus
             }
         },
         computed: {
@@ -168,7 +161,7 @@
                     this.visualWorlds = parseInt(this.simulationSettings.amountWorlds)
                     this.$nextTick(() => this.startSimulation())
                 } else {
-                    this.simulation.worlds.forEach(w=>w.status = "RUNNING")
+                    this.simulation.worlds.forEach(w => w.status = "RUNNING")
                 }
                 this.simulation.state = "RUNNING"
             })
@@ -182,7 +175,7 @@
 
             window.eventBus.$on('pause', () => {
                 this.simulation.state = 'PAUSE'
-                this.simulation.worlds.forEach(w=>w.status = "PAUSE")
+                this.simulation.worlds.forEach(w => w.status = "PAUSE")
             })
         }
     }
@@ -190,11 +183,11 @@
 
 <style scoped>
     .world {
-        display: inline-block;
-        min-height: 275px;
-        min-width: 250px;
-        border: black dotted 1px;
-        margin: 0 3px 3px 0;
-        padding: 0 15px 15px 15px;
+        text-align: center;
+    }
+
+    .world p {
+        margin: 5px 0;
+        font-size: 20px;
     }
 </style>

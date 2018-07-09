@@ -1,0 +1,95 @@
+.fas {
+  cursor: pointer;
+}
+
+.side-window {
+  height: 100%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  background-color: $primary-dark;
+  overflow-x: hidden;
+  padding-top: 60px;
+  transition: 0.5s;
+
+  .node, .dropdown {
+    padding-top: 16px;
+    padding-bottom: 8px;
+    text-align: center;
+    text-decoration: none;
+    color: $secondary-dark;
+    display: block;
+    transition: 0.3s;
+    border: none;
+    background: none;
+    width: 100%;
+    outline: 0;
+  }
+
+  .dropdown {
+    font-weight: bold;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  &.stats {
+    right: 0;
+
+    .closebtn {
+      left: 25px;
+      margin-right: 50px;
+      text-align: left;
+    }
+  }
+
+  &.settings {
+    left: 0;
+
+    .closebtn {
+      right: 25px;
+      margin-left: 50px;
+      text-align: right;
+    }
+  }
+
+  .closebtn {
+    position: absolute;
+    top: 0;
+    font-size: 45px;
+    width: 25px;
+    cursor: pointer;
+  }
+}
+
+canvas {
+  //width: 100%;
+  background-color: $secondary-light;
+  border: 2px groove $secondary-dark;
+  padding:5px;
+  width: 400px;
+  height: 200px;
+}
+
+.dropdown-container {
+  transition: 0.3s;
+}
+
+/* When you mouse over the navigation links, change their color */
+.sideSettings .node:hover {
+  color: $secondary-light; //#f1f1f1;
+}
+
+/* Style inputs with type="text", select elements and textareas */
+input[type=text], input[type=number], select, textarea {
+  min-width: 250px; /* Full width */
+  padding-left: 12px; /* Some padding */
+  border: 1px solid #ccc; /* Gray border */
+  border-radius: 4px; /* Rounded borders */
+  box-sizing: border-box; /* Make sure that padding and width stays in place */
+  /*margin-top: 6px; !* Add a top margin *!*/
+  /*margin-bottom: 16px; !* Bottom margin *!*/
+  resize: vertical; /* Allow the user to vertically resize the textarea (not horizontally) */
+  /*font-size: 15px;*/
+  height: 30px;
+  background: lightgrey;
+}

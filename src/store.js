@@ -10,7 +10,7 @@ export default new Vuex.Store({
         started: false,
         sideSettings: {
             show: true,
-            size: 350
+            size: 300
         },
         sideStats: {
             show: false,
@@ -28,6 +28,7 @@ export default new Vuex.Store({
             gridWidth: 50,
             elitism: 0,
             mutationRate: 5,
+            hideInactiveWorlds:false,
         },
         simulation: {
             generation: 0,

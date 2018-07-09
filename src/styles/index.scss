@@ -1,0 +1,22 @@
+@import 'tooltip';
+@import "slider";
+@import "remoteControl";
+@import "sideWindow";
+
+body {
+  background-color: $secondary-light;
+  color: $primary-dark;
+}
+
+.world {
+  display: inline-block;
+  min-height: 275px;
+  min-width: 250px;
+  //border: black dotted 1px;
+  //margin: 0 3px 3px 0;
+  //padding: 0 15px 15px 15px;
+
+  .p5Canvas {
+    border: $secondary-dark dashed 3px;
+  }
+}

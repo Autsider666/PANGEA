@@ -1,0 +1,35 @@
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  background: $primary-light;
+  cursor: pointer;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  color: $primary-light;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 200px;
+  background-color: $primary-dark;
+  color: $secondary-light;
+  border: 1px solid $primary-light;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -100px;
+  margin-bottom: 10px;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
