@@ -10,7 +10,7 @@
             <!--Coming Soon!-->
             <canvas ref="predatorScore" style="background-color: lightgrey"></canvas>
             <!--<label class="node" for="worlds">How many worlds?</label>-->
-            <!--<input type="number" id="worlds" min="1" v-model="simulationSettings.amountWorlds"><br>-->
+            <!--<input type="number" id="worlds" min="1" v-model="simulationSettings.world.amount"><br>-->
             <!--<label class="node" for="elitism">Elitism Percentage?</label>-->
             <!--<input type="number" id="elitism" min="10" max="100" v-model="simulationSettings.elitism"><br>-->
             <!--<label class="node" for="mutation">Mutation Rate Percentage?</label>-->

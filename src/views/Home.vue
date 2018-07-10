@@ -14,10 +14,10 @@
                     <span>
                         <b>Generation:</b> {{simulation.generation}} <br>
                     </span>
-                    <span v-if="simulationSettings.predatorBrains">
+                    <span v-if="simulationSettings.predator.hasBrain">
                         <b>Top Predator score:</b> {{simulation.topPredatorScore}} <br>
                     </span>
-                    <span v-if="simulationSettings.preyBrains">
+                    <span v-if="simulationSettings.prey.hasBrain">
                         <b>Top Prey score:</b> {{simulation.topPreyScore}} <br>
                     </span>
                 </div>

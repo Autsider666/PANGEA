@@ -1,34 +1,36 @@
 import Predator from './Predator.js'
 import Prey from './Prey.js'
+import ROT from 'rot-js'
 class World {
-    constructor(element, pixelHeight, pixelWidth, gridHeight, gridWidth, predators, predatorHasBrain, prey, preyHasBrain, onEnd) {
+    constructor(element, initialSettings, onEnd) {
         this.status = 'IDLE'
-        this.pixelHeight = pixelHeight
-        this.pixelWidth = pixelWidth
-        this.gridHeight = gridHeight
-        this.gridWidth = gridWidth
-        this.maxPredators = predators
-        this.maxPrey = prey
+        this.settings = JSON.parse(JSON.stringify(initialSettings))
+        this.creatureHeight = this.settings.world.size.height / this.settings.world.grid.height
+        this.creatureWidth = this.settings.world.size.width / this.settings.world.grid.width
         this.onEnd = onEnd
         this.element = element
 
-        this.predatorHasBrain = predatorHasBrain
-        this.preyHasBrain = preyHasBrain
+        this.map = []
+        // this.open
 
-        this.creatureHeight = this.pixelHeight / this.gridHeight
-        this.creatureWidth = this.pixelWidth / this.gridWidth
+        this.debug = true
+
+        this.mapType = false//'dungeon'
 
         this.spawnPredators()
         this.prey = []
-        for (let i = 1; i <= prey; i++) {
+        for (let i = 1; i <= this.settings.prey.amount; i++) {
             this.spawnPrey()
         }
 
         const P5 = require('p5')
         new P5(p => {
+                let bg;
                 p.setup = () => {
-                    p.frameRate(60)
-                    p.createCanvas(this.pixelWidth + this.pixelWidth / this.gridWidth + 2, this.pixelHeight + this.pixelHeight / this.gridHeight + 2)
+                    p.frameRate(999)
+                    p.createCanvas(this.settings.world.size.width + this.settings.world.size.width / this.settings.world.grid.width + 2, this.settings.world.size.height + this.settings.world.size.height / this.settings.world.grid.height + 2)
+                    bg = p.createGraphics(this.settings.world.size.width + this.settings.world.size.width / this.settings.world.grid.width, this.settings.world.size.height + this.settings.world.size.height / this.settings.world.grid.height)
+                    this.generateMap(bg)
                 }
 
                 p.drawPrey = () => {
@@ -48,12 +50,14 @@ class World {
                 p.drawPredator = () => {
                     p.fill('black')
                     this.predators.forEach(predator => {
-                        p.rect(
-                            (predator.x) * this.creatureWidth + 1,
-                            (predator.y) * this.creatureHeight + 1,
-                            this.creatureWidth,
-                            this.creatureHeight,
-                        )
+                        if (predator.energy) {
+                            p.rect(
+                                (predator.x) * this.creatureWidth + 1,
+                                (predator.y) * this.creatureHeight + 1,
+                                this.creatureWidth,
+                                this.creatureHeight,
+                            )
+                        }
                     })
                 }
 
@@ -74,26 +78,20 @@ class World {
                     }
 
                     if (this.status !== "PAUSE") {
+                        p.background(255)
+                        p.image(bg, 0, 0)
+                        p.fill(255)
+                        if (this.debug) p.text("FPS: " + p.frameRate().toFixed(0), 5, 20)
                         p.noStroke();
-                        if (this.predatorHasBrain) {
+                        if (this.settings.predator.hasBrain) {
                             this.predators.forEach(predator => predator.move(this))
                         }
 
-                        if (this.preyHasBrain) {
+                        if (this.settings.prey.hasBrain) {
                             this.prey.forEach(prey => prey.move(this))
                         }
 
                         this.updateWorld()
-                        p.background(255)
-                        for (let x = 0; x <= this.gridWidth; x++) {
-                            for (let y = 0; y <= this.gridHeight; y++) {
-                                // if ((board[i][j] == 1)) fill(0);
-                                // else fill(255);
-                                p.fill(255)
-                                p.rect(x * this.creatureWidth + 1, y * this.creatureHeight + 1, this.creatureWidth - 1, this.creatureHeight - 1);
-                            }
-                        }
-
                         p.drawPrey()
                         p.drawPredator()
                         this.turns++
@@ -103,20 +101,53 @@ class World {
             element)
     }
 
+    generateMap(bg) {
+        if (this.mapType === 'dungeon') {
+            let digger = new ROT.Map.Digger(this.settings.world.grid.width, this.settings.world.grid.height, {dugPercentage: 0.5});
+
+            let digCallback = function (x, y, value) {
+                let z = x * this.settings.world.grid.width + y
+                this.map[z] = !value;
+            }
+            digger.create(digCallback.bind(this));
+        }
+
+        if (this.mapType) {
+            bg.noStroke()
+            bg.background(0)
+            for (let x = 0; x <= this.settings.world.grid.width; x++) {
+                for (let y = 0; y <= this.settings.world.grid.height; y++) {
+                    let z = x * this.settings.world.grid.width + y
+                    if (this.map[z]) {
+                        bg.fill(255)
+                        bg.rect(
+                            (x) * this.creatureWidth,
+                            (y) * this.creatureHeight,
+                            this.creatureWidth,
+                            this.creatureHeight,
+                        )
+                    }
+                }
+            }
+        }
+
+
+    }
+
     spawnPrey() {
-        this.prey.push(new Prey(Math.floor(Math.random() * this.gridWidth) + 1, Math.floor(Math.random() * this.gridHeight) + 1))
+        this.prey.push(new Prey(Math.floor(Math.random() * this.settings.world.grid.width) + 1, Math.floor(Math.random() * this.settings.world.grid.height) + 1, this.settings.prey))
     }
 
     spawnPredators() {
         this.predators = []
-        for (let i = 1; i <= this.maxPredators; i++) {
-            this.predators.push(new Predator(Math.floor(Math.random() * this.gridWidth) + 1, Math.floor(Math.random() * this.gridHeight) + 1))
+        for (let i = 1; i <= this.settings.predator.amount; i++) {
+            this.predators.push(new Predator(Math.floor(Math.random() * this.settings.world.grid.width) + 1, Math.floor(Math.random() * this.settings.world.grid.height) + 1, this.settings.predator))
         }
     }
 
     resetPrey() {
         this.prey = []
-        for (let i = 1; i <= this.maxPrey; i++) {
+        for (let i = 1; i <= this.settings.prey.amount; i++) {
             this.spawnPrey()
         }
     }
@@ -130,8 +161,8 @@ class World {
             this.onEnd()
         } else {
             this.prey.filter(prey => !prey.alive).forEach(prey => {
-                prey.x = Math.floor(Math.random() * this.gridWidth) + 1
-                prey.y = Math.floor(Math.random() * this.gridHeight) + 1
+                prey.x = Math.floor(Math.random() * this.settings.world.grid.width) + 1
+                prey.y = Math.floor(Math.random() * this.settings.world.grid.height) + 1
                 prey.alive = true
             })
         }

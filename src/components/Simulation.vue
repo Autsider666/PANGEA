@@ -1,6 +1,6 @@
 <template>
     <div v-show="simulation.worlds.length">
-        <div v-show="!simulationSettings.hideInactiveWorlds || simulationSettings.hideInactiveWorlds && simulation.worlds[i-1].status !== 'GAME_OVER'"
+        <div v-show="!simulationSettings.world.hideInactive || simulationSettings.world.hideInactive && simulation.worlds[i-1].status !== 'GAME_OVER'"
              class="world" :ref="'w'+i" :key="i" :id="'World '+i"
              v-for="i in visualWorlds">
             <p><b>World {{i}}</b></p>
@@ -35,22 +35,15 @@
                 })
 
                 this.simulation.worlds = []
-                for (let i = 1; i <= this.simulationSettings.amountWorlds; i++) {
+                for (let i = 1; i <= this.simulationSettings.world.amount; i++) {
                     this.simulation.worlds.push(new World(this.$refs['w' + i][0],
-                        parseInt(this.simulationSettings.pixelHeight),
-                        parseInt(this.simulationSettings.pixelWidth),
-                        parseInt(this.simulationSettings.gridHeight),
-                        parseInt(this.simulationSettings.gridWidth),
-                        parseInt(this.simulationSettings.amountPredators),
-                        !!this.simulationSettings.predatorBrains,
-                        parseInt(this.simulationSettings.amountPrey),
-                        !!this.simulationSettings.preyBrains,
+                        this.simulationSettings,
                         () => this.endGeneration()))
                 }
 
                 this.simulation.predatorNeat = new window.neataptic.Neat(8, 4, null, {
-                        popsize: this.simulation.worlds.length * this.simulationSettings.amountPredators,
-                        elitism: 0,//this.simulationSettings.amountPredators / 100 * this.simulationSettings.elitism,
+                        popsize: this.simulation.worlds.length * this.simulationSettings.predator.amount,
+                        elitism: 0,//this.simulationSettings.predator.amount / 100 * this.simulationSettings.elitism,
                         mutationRate: this.simulationSettings.mutationRate / 100,
                         network: new window.neataptic.architect.Random(
                             2,
@@ -61,8 +54,8 @@
                 )
 
                 this.simulation.preyNeat = new window.neataptic.Neat(8, 4, null, {
-                        popsize: this.simulation.worlds.length * this.simulationSettings.amountPrey,
-                        elitism: 0, //this.simulationSettings.amountPrey / 100 * this.simulationSettings.elitism,
+                        popsize: this.simulation.worlds.length * this.simulationSettings.prey.amount,
+                        elitism: 0, //this.simulationSettings.prey.amount / 100 * this.simulationSettings.elitism,
                         mutationRate: this.simulationSettings.mutationRate / 100,
                         network: new window.neataptic.architect.Random(
                             2,
@@ -76,8 +69,9 @@
             seedWorlds() {
                 this.simulation.worlds.forEach((world, w) => {
                     world.resetPrey()
-                    world.prey.forEach(prey => {
-                        prey.brain = this.simulation.preyNeat.population[w]
+                    world.prey.forEach((prey, p) => {
+                        let x = w * world.prey.length + p
+                        prey.brain = this.simulation.preyNeat.population[x]
                         prey.energy = 100
                         prey.brain.score = 0
                     })
@@ -99,23 +93,27 @@
                 this.worldsFinished = 0;
 
 //                console.log([].concat.apply([], this.simulation.worlds.map(w => w.predators)).map(p => p.brain.score))
-//                console.log(this.simulation.predatorNeat.population.map(p => p.score))
+//                console.log(this.simulation.predatorNeat.population.map(p
 
-                if (this.simulationSettings.predatorBrains) {
+//                console.log([].concat.apply([], this.simulation.worlds.map(w => w.prey)).map(p => p.brain.score))
+//                console.log(this.simulation.preyNeat.population.map(p => p.score))
+
+                if (this.simulationSettings.predator.hasBrain) {
                     this.simulation.predatorNeat.sort()
                     this.simulation.topPredatorScore = Math.max(this.simulation.topPredatorScore, ...this.simulation.predatorNeat.population.map(p => p.score)).toFixed(2)
                 }
-                if (this.simulationSettings.preyBrains) {
+                if (this.simulationSettings.prey.hasBrain) {
                     this.simulation.preyNeat.sort()
+//                    console.log(this.simulation.topPreyScore, ...this.simulation.preyNeat.population.map(p => p.score))
                     this.simulation.topPreyScore = Math.max(this.simulation.topPreyScore, ...this.simulation.preyNeat.population.map(p => p.score)).toFixed(2)
                 }
 
                 window.eventBus.$emit('endGeneration')
 
-                if (this.simulationSettings.predatorBrains) {
+                if (this.simulationSettings.predator.hasBrain) {
                     this.breedNextGenerationOfPredators()
                 }
-                if (this.simulationSettings.preyBrains) {
+                if (this.simulationSettings.prey.hasBrain) {
                     this.breedNextGenerationOfPrey()
                 }
 
@@ -160,7 +158,7 @@
         mounted() {
             window.eventBus.$on('start', () => {
                 if (!this.simulation.worlds.length) {
-                    this.visualWorlds = parseInt(this.simulationSettings.amountWorlds)
+                    this.visualWorlds = parseInt(this.simulationSettings.world.amount)
                     this.$nextTick(() => this.startSimulation())
                 } else {
                     this.simulation.worlds.forEach(w => w.status = "RUNNING")
@@ -169,7 +167,7 @@
             })
 
             window.eventBus.$on('restart', () => {
-                this.visualWorlds = parseInt(this.simulationSettings.amountWorlds)
+                this.visualWorlds = parseInt(this.simulationSettings.world.amount)
                 this.$nextTick(() => this.startSimulation())
                 this.simulation.state = "RUNNING"
             })

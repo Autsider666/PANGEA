@@ -20,15 +20,15 @@
             </span>
         </div>
 
-        <div class="remote-control" title="Show inactive worlds" v-if="simulationSettings.hideInactiveWorlds"
-             @click="simulationSettings.hideInactiveWorlds = false">
+        <div class="remote-control" title="Show inactive worlds" v-if="simulationSettings.world.hideInactive"
+             @click="simulationSettings.world.hideInactive = false">
             <span class="node remote-button">
                 <i class="fas fa-eye"></i>
             </span>
         </div>
 
         <div class="remote-control" v-else=""
-             @click="simulationSettings.hideInactiveWorlds = true" title="Hide inactive worlds">
+             @click="simulationSettings.world.hideInactive = true" title="Hide inactive worlds">
             <span class="node remote-button">
                 <i class="fas fa-eye-slash"></i>
             </span>
