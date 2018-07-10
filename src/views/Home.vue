@@ -10,10 +10,17 @@
                     Red dot = Prey
                 </p>
 
-                <p v-show="simulation.worlds.length">
-                    <b>Generation:</b> {{simulation.generation}} <br>
-                    <b>Top Predator score:</b> {{simulation.topPredatorScore}}
-                </p>
+                <div v-show="simulation.worlds.length">
+                    <span>
+                        <b>Generation:</b> {{simulation.generation}} <br>
+                    </span>
+                    <span v-if="simulationSettings.predatorBrains">
+                        <b>Top Predator score:</b> {{simulation.topPredatorScore}} <br>
+                    </span>
+                    <span v-if="simulationSettings.preyBrains">
+                        <b>Top Prey score:</b> {{simulation.topPreyScore}} <br>
+                    </span>
+                </div>
             </div>
             <analytics></analytics>
         </div>
@@ -33,7 +40,8 @@
             analytics,
         },
         computed: {
-            simulation: sync('simulation')
+            simulation: sync('simulation'),
+            simulationSettings: sync('simulationSettings'),
         }
     }
 </script>

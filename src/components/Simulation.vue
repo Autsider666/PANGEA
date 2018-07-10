@@ -104,15 +104,20 @@
                 if (this.simulationSettings.predatorBrains) {
                     this.simulation.predatorNeat.sort()
                     this.simulation.topPredatorScore = Math.max(this.simulation.topPredatorScore, ...this.simulation.predatorNeat.population.map(p => p.score)).toFixed(2)
-                    this.breedNextGenerationOfPredators()
                 }
                 if (this.simulationSettings.preyBrains) {
                     this.simulation.preyNeat.sort()
                     this.simulation.topPreyScore = Math.max(this.simulation.topPreyScore, ...this.simulation.preyNeat.population.map(p => p.score)).toFixed(2)
-                    this.breedNextGenerationOfPrey()
                 }
 
                 window.eventBus.$emit('endGeneration')
+
+                if (this.simulationSettings.predatorBrains) {
+                    this.breedNextGenerationOfPredators()
+                }
+                if (this.simulationSettings.preyBrains) {
+                    this.breedNextGenerationOfPrey()
+                }
 
                 this.simulation.generation++
                 this.seedWorlds()

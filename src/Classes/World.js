@@ -28,7 +28,7 @@ class World {
         new P5(p => {
                 p.setup = () => {
                     p.frameRate(60)
-                    p.createCanvas(this.pixelWidth + this.pixelWidth / this.gridWidth + 4, this.pixelHeight + this.pixelHeight / this.gridHeight + 4)
+                    p.createCanvas(this.pixelWidth + this.pixelWidth / this.gridWidth + 2, this.pixelHeight + this.pixelHeight / this.gridHeight + 2)
                 }
 
                 p.drawPrey = () => {
@@ -36,8 +36,8 @@ class World {
                     this.prey.forEach(prey => {
                         if (prey.alive) {
                             p.ellipse(
-                                (prey.x) * this.creatureWidth + 2,
-                                (prey.y) * this.creatureHeight + 2,
+                                (prey.x) * this.creatureWidth + 1 + this.creatureWidth / 2,
+                                (prey.y) * this.creatureHeight + 1 + this.creatureHeight / 2,
                                 this.creatureWidth,
                                 this.creatureHeight,
                             )
@@ -49,8 +49,8 @@ class World {
                     p.fill('black')
                     this.predators.forEach(predator => {
                         p.rect(
-                            (predator.x) * this.creatureWidth + 2,
-                            (predator.y) * this.creatureHeight + 2,
+                            (predator.x) * this.creatureWidth + 1,
+                            (predator.y) * this.creatureHeight + 1,
                             this.creatureWidth,
                             this.creatureHeight,
                         )
@@ -73,7 +73,8 @@ class World {
                         return
                     }
 
-                    if (this.status !== "PAUSE"){
+                    if (this.status !== "PAUSE") {
+                        p.noStroke();
                         if (this.predatorHasBrain) {
                             this.predators.forEach(predator => predator.move(this))
                         }
@@ -83,11 +84,18 @@ class World {
                         }
 
                         this.updateWorld()
-
                         p.background(255)
+                        for (let x = 0; x <= this.gridWidth; x++) {
+                            for (let y = 0; y <= this.gridHeight; y++) {
+                                // if ((board[i][j] == 1)) fill(0);
+                                // else fill(255);
+                                p.fill(255)
+                                p.rect(x * this.creatureWidth + 1, y * this.creatureHeight + 1, this.creatureWidth - 1, this.creatureHeight - 1);
+                            }
+                        }
 
-                        p.drawPredator()
                         p.drawPrey()
+                        p.drawPredator()
                         this.turns++
                     }
                 }

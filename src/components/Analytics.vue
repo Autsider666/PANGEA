@@ -23,15 +23,15 @@
                 this.chart.data.labels = [0]
                 this.chart.data.datasets = [
                     {
-                        label: 'Top score',
+                        label: 'Top predator score',
                         data: [0]
                     },
                     {
-                        label: 'Average score',
+                        label: 'Average predator score',
                         data: [0]
                     },
                     {
-                        label: 'Lowest Score',
+                        label: 'Lowest predator Score',
                         data: [0]
                     }
                 ]
@@ -43,15 +43,15 @@
                 labels: [0],
                 datasets: [
                     {
-                        label: 'Top score',
+                        label: 'Top predator score',
                         data: [0]
                     },
                     {
-                        label: 'Average score',
+                        label: 'Average predator score',
                         data: [0]
                     },
                     {
-                        label: 'Lowest Score',
+                        label: 'Lowest predator Score',
                         data: [0]
                     }
                 ]
@@ -62,7 +62,7 @@
                 options: {
                     title: {
                         display: true,
-                        text: 'Predator score history',
+                        text: 'Simulation score history',
                     },
                     responsive: false,
                     maintainAspectRatio: false,
