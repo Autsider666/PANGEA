@@ -62,7 +62,7 @@
 
                 this.simulation.preyNeat = new window.neataptic.Neat(8, 4, null, {
                         popsize: this.simulation.worlds.length * this.simulationSettings.amountPrey,
-                        elitism: this.simulationSettings.amountPrey / 100 * this.simulationSettings.elitism,
+                        elitism: 0, //this.simulationSettings.amountPrey / 100 * this.simulationSettings.elitism,
                         mutationRate: this.simulationSettings.mutationRate / 100,
                         network: new window.neataptic.architect.Random(
                             2,
@@ -98,25 +98,22 @@
                 }
                 this.worldsFinished = 0;
 
-//                this.simulation.worlds.forEach((world, w) => {
-//                    world.predators.forEach((predator, p) => {
-//                        let x = (w + 1) * (p + 1) - 1;
-//                        this.simulation.predatorNeat.population[x].score = predator.brain.score + 1
-//                    })
-//                })
-
 //                console.log([].concat.apply([], this.simulation.worlds.map(w => w.predators)).map(p => p.brain.score))
 //                console.log(this.simulation.predatorNeat.population.map(p => p.score))
 
-                this.simulation.predatorNeat.sort()
+                if (this.simulationSettings.predatorBrains) {
+                    this.simulation.predatorNeat.sort()
+                    this.simulation.topPredatorScore = Math.max(this.simulation.topPredatorScore, ...this.simulation.predatorNeat.population.map(p => p.score)).toFixed(2)
+                    this.breedNextGenerationOfPredators()
+                }
+                if (this.simulationSettings.preyBrains) {
+                    this.simulation.preyNeat.sort()
+                    this.simulation.topPreyScore = Math.max(this.simulation.topPreyScore, ...this.simulation.preyNeat.population.map(p => p.score)).toFixed(2)
+                    this.breedNextGenerationOfPrey()
+                }
 
                 window.eventBus.$emit('endGeneration')
 
-                this.simulation.topPredatorScore = Math.max(this.simulation.topPredatorScore, ...this.simulation.predatorNeat.population.map(p => p.score)).toFixed(2)
-                this.simulation.topPreyScore = Math.max(this.simulation.topPreyScore, ...this.simulation.preyNeat.population.map(p => p.score)).toFixed(2)
-
-                this.breedNextGenerationOfPredators()
-                this.breedNextGenerationOfPrey()
                 this.simulation.generation++
                 this.seedWorlds()
             },
