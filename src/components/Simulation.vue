@@ -167,8 +167,13 @@
             })
 
             window.eventBus.$on('restart', () => {
-                this.visualWorlds = parseInt(this.simulationSettings.world.amount)
-                this.$nextTick(() => this.startSimulation())
+                this.visualWorlds = 0
+                this.$nextTick(() => {
+                    this.visualWorlds = parseInt(this.simulationSettings.world.amount)
+                    this.$nextTick(() => {
+                        this.startSimulation()
+                    })
+                })
                 this.simulation.state = "RUNNING"
             })
 
