@@ -21,7 +21,7 @@ export default new Vuex.Store({
             amountPredators: 1,
             predatorBrains: true,
             amountPrey: 1,
-            preyBrains: false,
+            preyBrains: true,
             pixelHeight: 200,
             pixelWidth: 200,
             gridHeight: 50,

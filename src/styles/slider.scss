@@ -2,13 +2,58 @@
   width: 100%;
 }
 
+$activeColor: lighten($primary-light,10%); //#27ae60; //green
+$darkenColor: darken($activeColor, 10%);
+
+.checkbox {
+  display: inline-block;
+  width: 26px;
+  height: 26px;
+  position: relative;
+  margin: 0 10px;// auto;
+  background: #fcfff4;
+  background: $secondary-dark; //linear-gradient(top, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+  box-shadow: inset 0px 1px 1px white, 0px 1px 3px rgba(0, 0, 0, 0.5);
+  label {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    cursor: pointer;
+    background: linear-gradient(top, #222 0%, #45484d 100%);
+    box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 1);
+    &:after {
+      content: '';
+      width: 16px;
+      height: 16px;
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      background: $activeColor;
+      background: linear-gradient(top, $activeColor 0%, $darkenColor 100%);
+      box-shadow: inset 0px 1px 1px white, 0px 1px 3px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+    }
+    &:hover::after {
+      opacity: 0.3;
+    }
+  }
+  input[type=checkbox] {
+    visibility: hidden;
+    &:checked + label:after {
+      opacity: 1;
+    }
+  }
+}
+
 .slider {
   -webkit-appearance: none;
   width: 100%;
   height: 25px;
-  background: $secondary-light;
+  background: linear-gradient(right,$secondary-light 0%,darken($secondary-dark,10%) 100%);// $secondary-light;
   outline: none;
-  opacity: 0.7;
+  opacity: 0.8;
   -webkit-transition: .2s;
   transition: opacity .2s;
 }
@@ -22,6 +67,8 @@
   appearance: none;
   width: 25px;
   height: 25px;
-  background: $primary-light;
+  //background: $primary-light;
+  background: linear-gradient(top, lighten($primary-light,10%) 0%, darken($primary-light,10%) 100%);
+  //box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 1);
   cursor: pointer;
 }

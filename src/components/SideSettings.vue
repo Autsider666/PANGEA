@@ -71,15 +71,6 @@
                 <input type="range" id="gridWidth" class="slider" min="25" max="500"
                        v-model="simulationSettings.gridWidth">
             </div>
-
-            <!--<label class="node" for="pixelHeight">World pixel height?</label>-->
-            <!--<input type="number" id="pixelHeight" min="1" v-model="simulationSettings.pixelHeight"><br>-->
-            <!--<label class="node" for="pixelWidth">World pixel width?</label>-->
-            <!--<input type="number" id="pixelWidth" min="1" v-model="simulationSettings.pixelWidth"><br>-->
-            <!--<label class="node" for="GridHeight">World grid height?</label>-->
-            <!--<input type="number" id="GridHeight" min="1" v-model="simulationSettings.gridHeight"><br>-->
-            <!--<label class="node" for="gridWidth">World grid width?</label>-->
-            <!--<input type="number" id="gridWidth" min="1" v-model="simulationSettings.gridWidth"><br>-->
         </div>
         <button class="dropdown" @click="toggleDropdown('predator')">
             Predator Settings
@@ -88,9 +79,21 @@
         </button>
         <div class="dropdown-container" v-bind:style="{display:dropdown === 'predator' ? 'block':'none'}">
             <div class="slidecontainer">
-                <label class="node" for="predator">Predators in each world: {{simulationSettings.amountPredators}}</label>
-                <input type="range" id="predator" class="slider" min="1" max="100" v-model="simulationSettings.amountPredators"><br>
+                <label class="node"
+                       for="predator">Predators in each world: {{simulationSettings.amountPredators}}</label>
+                <input type="range" id="predator" class="slider" min="1" max="100"
+                       v-model="simulationSettings.amountPredators"><br>
             </div>
+            <label class="node" for="predatorBrain">
+                    <span class="tooltip"><i class="fas fa-info-circle"></i>
+                        <span class="tooltiptext">Do you want predators to be static or powered by an evolving "brain"?</span>
+                    </span>
+                Evolving predators?
+                <div class="checkbox">
+                    <input type="checkbox" v-model="simulationSettings.predatorBrains" id="predatorBrain" name="check"/>
+                    <label for="predatorBrain"></label>
+                </div>
+            </label>
         </div>
         <button class="dropdown" @click="toggleDropdown('prey')">
             Prey Settings
@@ -100,9 +103,18 @@
         <div class="dropdown-container" v-bind:style="{display:dropdown === 'prey' ? 'block':'none'}">
             <div class="slidecontainer">
                 <label class="node" for="prey">Prey in each world: {{simulationSettings.amountPrey}}</label>
-                <input type="range" id="prey" class="slider" min="1" max="100" v-model="simulationSettings.amountPrey"><br>
-                <!--<label class="node" for="preyBrain">Should prey have a brain?</label>-->
-                <!--<input type="checkbox" id="preyBrain" v-model="simulationSettings.preyBrains">-->
+                <input type="range" id="prey" class="slider" min="1" max="100"
+                       v-model="simulationSettings.amountPrey"><br>
+                <label class="node" for="preyBrain">
+                    <span class="tooltip"><i class="fas fa-info-circle"></i>
+                        <span class="tooltiptext">Do you want prey to be static or powered by an evolving "brain"?</span>
+                    </span>
+                    Evolving prey?
+                    <div class="checkbox">
+                        <input type="checkbox" v-model="simulationSettings.preyBrains" id="preyBrain" name="check"/>
+                        <label for="preyBrain"></label>
+                    </div>
+                </label>
             </div>
         </div>
     </div>

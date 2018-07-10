@@ -63,7 +63,7 @@ class World {
                         p.fill(0)
                         p.textSize(15)
                         if (this.status === "GAME_OVER") {
-                            let max = this.predators.map(p => p.brain.score).reduce(function (a, b) {
+                            let max = this.predators.map(p => p.brain.score.toFixed(2)).reduce(function (a, b) {
                                 return Math.max(a, b);
                             });
                             if (max) {
